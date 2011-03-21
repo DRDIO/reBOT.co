@@ -1,0 +1,3 @@
+[submodule "public/therenderengine"]
+	path = public/therenderengine
+	url = git://github.com/KevinNuut/TheRenderEngine.git
