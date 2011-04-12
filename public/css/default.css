@@ -1,0 +1,59 @@
+body {
+	font: 12px normal Helvetica, Arial, sans-serif;
+	background: #333;
+	background-image: 
+		-webkit-linear-gradient(rgba(32, 32, 32, 0.5) 0%, rgba(32, 32, 32, 0.5) 50%, rgba(32, 32, 32, 0.7) 50%, rgba(32, 32, 32, 0.7) 100%),
+		-webkit-linear-gradient(left, rgba(32, 32, 32, 0.5) 0%, rgba(32, 32, 32, 0.5) 50%, rgba(32, 32, 32, 0.7) 50%, rgba(32, 32, 32, 0.7) 100%);
+	background-size: 128px 128px;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+#page {
+	width: 640px;
+	height: 480px;
+	position: absolute;	
+	top: 50%;
+	left: 50%;
+	margin-left: -320px;
+	margin-top: -240px;
+}
+
+#title {
+	padding-top: 8px;
+	padding-bottom: 8px;
+	height: 34px;
+	
+}
+
+#title h1{
+	font-size: 3em;
+	line-height: 1em;
+	margin: 0;
+	color: #aaa;
+}
+
+#game {
+	width: 640px;
+	height: 400px;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+	position: relative;
+}
+
+#game canvas {
+	border-radius: 8px;
+}
+
+#copyright{
+	text-align: right;
+	padding-top: 8px;
+	height: 22px;
+}
+
+	#copyright p {
+		margin: 0;
+	}
+
+#copyright, #copyright a {
+	color: #555;
