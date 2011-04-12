@@ -33,16 +33,31 @@ body {
 }
 
 #game {
+	display: block;
 	width: 640px;
 	height: 400px;
-	background: #fff;
-	border-radius: 8px;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
 	position: relative;
+	background: rgb(89,149,179);
+	background-image: -webkit-gradient(
+		linear,
+		left top,
+		left bottom,
+		color-stop(0, rgb(89,149,179)),
+		color-stop(1, rgb(178,229,255))
+	);
+	background-image: -moz-linear-gradient(
+		center top,
+		rgb(89,149,179) 0%,
+		rgb(178,229,255) 100%
+	);
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+	overflow: hidden;
 }
 
 #game canvas {
-	border-radius: 8px;
 }
 
 #copyright{
