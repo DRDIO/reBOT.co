@@ -24,7 +24,7 @@ $(function() {
 		zlimit = zstep * 8,
 		ystep  = 0,
 		xstep  = 0, 
-		steps  = 12;
+		steps  = 6;
 	
 	terrain.dirt.obj        = new Image();
 	terrain.dirt.obj.onload = render;	
@@ -39,11 +39,11 @@ $(function() {
 			for (var ystep = -steps; ystep <= steps; ystep++) {			
 				map[xstep][ystep] = {};
 				
-				var zrange = searchNeighbors(xstep, ystep);
-				var z      = 0;
+				var z,
+					zrange = searchNeighbors(xstep, ystep);
 				
 				if (!zrange) {
-					z = Math.round(Math.random() * zstep - (zstep / 2)) * zstep;
+					z = zstep * 4;
 				} else {
 					var zoff  = (zrange.zmax - zrange.zmin);
 					var zrand = Math.random() * zoff + zrange.zmin;

@@ -58,6 +58,8 @@ body {
 }
 
 #game canvas {
+	border-radius: 8px;
+	-moz-border-radius: 8px;
 }
 
 #copyright{
