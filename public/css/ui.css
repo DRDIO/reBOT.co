@@ -1,0 +1,134 @@
+body {
+    font: 12px normal Helvetica, Arial, sans-serif;
+    background: #333;
+    background-image:
+        -webkit-linear-gradient(rgba(32, 32, 32, 0.5) 0%, rgba(32, 32, 32, 0.5) 50%, rgba(32, 32, 32, 0.7) 50%, rgba(32, 32, 32, 0.7) 100%),
+        -webkit-linear-gradient(left, rgba(32, 32, 32, 0.5) 0%, rgba(32, 32, 32, 0.5) 50%, rgba(32, 32, 32, 0.7) 50%, rgba(32, 32, 32, 0.7) 100%);
+    background-size: 128px 128px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+#page {
+    width: 640px;
+    height: 480px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -320px;
+    margin-top: -240px;
+}
+
+#title {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    height: 34px;
+
+}
+
+    #title h1{
+        font-size: 3em;
+        line-height: 1em;
+        margin: 0;
+        color: #aaa;
+    }
+
+#game {
+    display: block;
+    width: 640px;
+    height: 400px;
+    position: relative;
+    background: rgb(89,149,179);
+    border-radius: 8px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+
+    background-image: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0, rgb(89,149,179)),
+        color-stop(1, rgb(178,229,255)));
+    background-image: -moz-linear-gradient(
+        center top,
+        rgb(89,149,179) 0%,
+        rgb(178,229,255) 100%);
+    -moz-border-radius: 8px;
+    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+    #game canvas {
+        border-radius: 8px;
+        -moz-border-radius: 8px;
+    }
+
+#copyright {
+    width: inherit;
+    overflow: hidden;
+    padding-top: 8px;
+    height: 22px;
+}
+
+    #copyright button {
+        margin: 0;
+        float: left;
+    }
+
+    #copyright p {
+        float: right;
+        margin: 2px 0 0;
+    }
+
+    #copyright, #copyright a {
+        color: #555;
+        text-decoration: none;
+    }
+
+        #copyright button.ui-button-icon-only .ui-button-text {
+            padding: 0;
+        }
+
+        #copyright button.ui-button-icon-only {
+            width: auto;
+        }
+
+        #copyright button .ui-button-text {
+            width: 16px;
+        }
+
+#panel {
+    background: #fff;
+    padding: 0.5em;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+
+    #panel h2 {
+        font-size: 1.5em;
+        font-weight: normal;
+        margin: 0 0 0.75em;
+        line-height: 1em;
+    }
+
+    #panel div {
+        margin-bottom: 0.5em;
+    }
+
+    #panel div>label {
+        display: block;
+        width: 150px;
+        float: left;
+        padding-top: 4px;
+    }
+
+    #panel span label {
+        width: 100px;
+    }
+
+/* JQUERY UI OVERRIDES */
+
+.ui-widget {
+    font-size: 1em;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    font-weight: normal;
+}
