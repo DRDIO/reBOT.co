@@ -31,8 +31,6 @@ $(function()
 
 	// Create player object (TODO: Loop)
 	npc.player.obj        = new Image();
-    npc.player.obj.onload = convertNpc;
-    npc.player.obj.src    = imgDir + npc.player.url;
 	
 	// Implement Game Canvas
     $('#game').canvas();
@@ -73,8 +71,10 @@ $(function()
 		tile.width  = terrain.dirt.obj.width; 
 		tile.height = terrain.dirt.obj.height;
 		tileCtx.drawImage(terrain.dirt.obj, 0, 0);
-		
-		render();
+				
+		// TODO: Proper image loading screen
+		npc.player.obj.onload = convertNpc;
+		npc.player.obj.src    = imgDir + npc.player.url;
 	}
 	
 	function convertNpc() 
@@ -82,6 +82,8 @@ $(function()
 		player.width  = npc.player.obj.width; 
 		player.height = npc.player.obj.height;
 		playerCtx.drawImage(npc.player.obj, 0, 0);
+		
+		render();
 	}
 	
 	function render()
@@ -98,6 +100,10 @@ $(function()
 				renderTile(xstep, ystep);
             }
         }
+		
+		buildCtx.globalAlpha = 0.5;
+		buildCtx.drawImage(player, xc - npc.player.xoff, yc - map[0][0].z - npc.player.yoff);
+		buildCtx.globalAlpha = 1;
 		
 		// Put the build canvas onto the display canvas
 		$('#game').canvasContext().drawImage(build, 0, 0, w, h, 0, 0, w, h);
@@ -138,27 +144,29 @@ $(function()
 		
 		map[xstep][ystep].z = z;
 		
-		if ((xstep == 1 && ystep == 1 || xstep == 1 && ystep == 0 || xstep == 0 && ystep == 1) && z > map[0][0].z) {
+		buildCtx.drawImage(tile, xpos, ypos);
+		
+		// if ((xstep == 1 && ystep == 1 || xstep == 1 && ystep == 0 || xstep == 0 && ystep == 1) && z > map[0][0].z) {
 			// Test altering tiles
-			tileData = tileCtx.getImageData(0, 0, tile.width, tile.height);
-			for (var i = 0; i < tileData.data.length; i += 4) {
-				tileData.data[i + 3] -= 128;
-			}
+			// tileData = tileCtx.getImageData(0, 0, tile.width, tile.height);
+			// for (var i = 0; i < tileData.data.length; i += 4) {
+				// tileData.data[i + 3] -= 128;
+			// }
 			
-			var temp    = document.createElement('canvas'),
-				tempCtx = temp.getContext('2d');
+			// var temp    = document.createElement('canvas'),
+				// tempCtx = temp.getContext('2d');
 				
-			temp.width  = tile.width;
-			temp.height = tile.height;
-			tempCtx.putImageData(tileData, 0, 0);
+			// temp.width  = tile.width;
+			// temp.height = tile.height;
+			// tempCtx.putImageData(tileData, 0, 0);
 			
-			buildCtx.drawImage(temp, xpos, ypos);
-		} else {
-			buildCtx.drawImage(tile, xpos, ypos);
-		}
+			// buildCtx.drawImage(temp, xpos, ypos);
+		// } else {
+			// buildCtx.drawImage(tile, xpos, ypos);
+		// }
 		
 		if (xstep == 0 && ystep == 0) {
-			buildCtx.drawImage(npc.player.obj, xc - npc.player.xoff, yc - z - npc.player.yoff);
+			buildCtx.drawImage(player, xc - npc.player.xoff, yc - z - npc.player.yoff);
 		}
 	}
 	
