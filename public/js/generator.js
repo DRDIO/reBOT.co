@@ -20,11 +20,11 @@ $(function() {
 	var xc = w / 2;
 	var yc = h / 2;	
 	
-	var zstep  = 12,
-		zlimit = zstep * 8,
+	var zstep  = 8,
+		zlimit = zstep * 5000,
 		ystep  = 0,
 		xstep  = 0, 
-		steps  = 6;
+		steps  = 8;
 	
 	terrain.dirt.obj        = new Image();
 	terrain.dirt.obj.onload = render;	
@@ -32,23 +32,27 @@ $(function() {
 	
 	function render() {
 		var context = $('#game').canvasContext();
-				
+		var simplex = new SimplexNoise();
+		
 		for (var xstep = -steps; xstep <= steps; xstep++) {
 			map[xstep] = {};
 			
-			for (var ystep = -steps; ystep <= steps; ystep++) {			
+			for (var ystep = -steps; ystep <= steps; ystep++) {	
 				map[xstep][ystep] = {};
 				
 				var z,
 					zrange = searchNeighbors(xstep, ystep);
 				
 				if (!zrange) {
-					z = zstep * 4;
+					z = zstep * 8;
 				} else {
 					var zoff  = (zrange.zmax - zrange.zmin);
-					var zrand = Math.random() * zoff + zrange.zmin;
-					console.log(zrange.zmax + ' ' + zrange.zmin + ' ' + zrand);
-					z = Math.round((Math.random() * zoff + zrange.zmin) / zstep) * zstep;
+					// var zrand = Math.random();
+					// z = Math.round((zrand * zoff + zrange.zmin) / zstep) * zstep;
+					
+					var zrand = (simplex.noise(xstep / 16, ystep / 16) / 2 + 0.5);
+					z = Math.round((zrand * zoff + zrange.zmin) / zstep) * zstep;
+					// z = Math.round(zrand * zstep) * 8;
 				}
 				
 				var xpos = xc + xstep * terrain.dirt.xoff - ystep * terrain.dirt.xoff;
@@ -59,7 +63,7 @@ $(function() {
 				context.drawImage(terrain.dirt.obj, xpos, ypos);
 			}
 		}
-	};
+	}
 	
 	function searchNeighbors(xstep, ystep)
 	{
