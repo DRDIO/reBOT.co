@@ -48,23 +48,57 @@ $(function()
 		xc 	   = w / 2,
 		yc 	   = h / 2,	
 		zstep  = 8,
-		zlimit = zstep * 5000,
-		ystep  = 0,
-		xstep  = 0,
-		steps  = 8;
-					
+		zlimit = zstep * 5000,				// Height Limit of world (+-)
+		
+		nstep  = 32, 						// Noise Frequency
+		namp   = 32,						// Noise Amplitude
+		
+		steps  = 32,						// Number of steps to generate out from player (init)
+		rstep  = 32,						// Number of tiles to render
+		gx     = 0,
+		gy     = 0;
+		pdir   = 3;							// Player direction (NW = 0, NE = 1, SE = 2, SW = 3)
+		
+	// Directional keys
+	var KEY_NW = 37,
+		KEY_NE = 38,
+		KEY_SE = 39,
+		KEY_SW = 40;
+		
+	// Init Remaining Globals
+	var simplex, settingLock, settingRandom;
+				
 	build.width  = w;
 	build.height = h;
 			
 	// Manage change event for setting toggles
-    $('#panel input').change(function() {
-       $('#game').clearRect(0, 0, w, h);
-	   buildCtx.clearRect(0, 0, w, h);
-       map = {};
-       render();
-    });
+    $('#panel input').change(init);	
+	$('#setting-refresh').button().click(init);
 	
-	var simplex, settingLock, settingRandom;
+	$(window).keydown(function(e) {
+		key = e.which;
+		
+		var gxtemp = gx, gytemp = gy;
+		
+		if (key == KEY_NW) {
+			gx  -= 1;
+			pdir = 0;
+		} else if (key == KEY_NE) {
+			gy  -= 1;
+			pdir = 1;
+		} else if (key == KEY_SE) {
+			gx  += 1;
+			pdir = 2;
+		} else if (key == KEY_SW) {
+			gy  += 1;
+			pdir = 3;
+		}
+		
+		// Make sure a tile exists at coords
+		seed(gx, gy, steps);
+		
+		render();
+	});
 	
     function convertTerrain() 
 	{			
@@ -83,33 +117,40 @@ $(function()
 		player.height = npc.player.obj.height;
 		playerCtx.drawImage(npc.player.obj, 0, 0);
 		
-		render();
+		init();
 	}
 	
-	function render()
-	{	
+	function init()
+	{
 		simplex 	  = new SimplexNoise();
 		settingLock   = $('#setting-lock input:checked').val();
 		settingRandom = $('#setting-random input:checked').val();
-
-        for (var xstep = -steps; xstep <= steps; xstep++) {
-			map[xstep] = {};
+		
+		gx  = 0;
+		gy  = 0;
+		map = {};
+		
+		seed(gx, gy, steps);
+		render();
+	}
+	
+	function seed(x, y, r)
+	{
+		for (var xstep = x - r; xstep <= x + r; xstep++) {
+			if (!(xstep in map)) {
+				map[xstep] = {};
+			}
 			
-            for (var ystep = -steps; ystep <= steps; ystep++) {
-				map[xstep][ystep] = {};
-				renderTile(xstep, ystep);
+            for (var ystep = y - r; ystep <= y + r; ystep++) {
+				if (!(ystep in map[xstep])) {
+					map[xstep][ystep] = {};
+					setTileHeight(xstep, ystep);
+				}							
             }
         }
-		
-		buildCtx.globalAlpha = 0.5;
-		buildCtx.drawImage(player, xc - npc.player.xoff, yc - map[0][0].z - npc.player.yoff);
-		buildCtx.globalAlpha = 1;
-		
-		// Put the build canvas onto the display canvas
-		$('#game').canvasContext().drawImage(build, 0, 0, w, h, 0, 0, w, h);
-    }
+	}
 	
-	function renderTile(xstep, ystep) 
+	function setTileHeight(xstep, ystep)
 	{
 		var z,
 			zrange = searchNeighbors(xstep, ystep);
@@ -118,20 +159,18 @@ $(function()
 			z = zstep;
 		} else {
 			var zrand, zlimit;
-
-			if (settingRandom == 'simplex') {
-				var nstep = 16,
-					zoff  = (zrange.zmax - zrange.zmin);
-
+						
+			if (settingRandom == 'simplex') {				
 				zrand = (simplex.noise(xstep / nstep, ystep / nstep) / 2 + 0.5);
 			} else {
 				zrand = Math.random();
 			}
 			
 			if (settingLock == 'lock') {
+				var zoff = (zrange.zmax - zrange.zmin);
 				zlimit = zrand * zoff + zrange.zmin;
 			} else if (settingLock == 'free') {
-				zlimit = zrand * 128;
+				zlimit = zrand * zstep * namp;
 			} else {
 				zlimit = zstep;
 			}
@@ -139,35 +178,61 @@ $(function()
 			z = Math.round(zlimit / zstep) * zstep;
 		}
 		
+		map[xstep][ystep].z = z;
+	}
+	
+	function render()
+	{	
+		// Clear Canvases
+		$('#game').clearRect(0, 0, w, h);
+		buildCtx.clearRect(0, 0, w, h);
+	   
+		for (var xstep = gx - rstep; xstep <= gx + rstep; xstep++) {
+			for (var ystep = gy - rstep; ystep <= gy + rstep; ystep++) {
+				if (xstep in map && ystep in map[xstep]) {
+					var xtile = xstep - gx, ytile = ystep - gy;
+					var ztile = map[xstep][ystep].z - map[gx][gy].z;
+					renderTile(xtile, ytile, ztile);
+				}
+            }
+        }
+		
+		// Overlay a translucent player to deal with obfuscation
+		renderPlayer(true);
+		
+		// Put the build canvas onto the display canvas
+		$('#game').canvasContext().drawImage(build, 0, 0, w, h, 0, 0, w, h);
+    }
+	
+	function renderTile(xstep, ystep, z) 
+	{
+		// Translate 3D coordinates to 2D Isometric		
 		var xpos = xc + xstep * terrain.dirt.xoff - ystep * terrain.dirt.xoff - terrain.dirt.xoff;
 		var ypos = yc + xstep * terrain.dirt.yoff + ystep * terrain.dirt.yoff - z - terrain.dirt.yoff;
-		
-		map[xstep][ystep].z = z;
-		
+					
 		buildCtx.drawImage(tile, xpos, ypos);
 		
-		// if ((xstep == 1 && ystep == 1 || xstep == 1 && ystep == 0 || xstep == 0 && ystep == 1) && z > map[0][0].z) {
-			// Test altering tiles
-			// tileData = tileCtx.getImageData(0, 0, tile.width, tile.height);
-			// for (var i = 0; i < tileData.data.length; i += 4) {
-				// tileData.data[i + 3] -= 128;
-			// }
-			
-			// var temp    = document.createElement('canvas'),
-				// tempCtx = temp.getContext('2d');
-				
-			// temp.width  = tile.width;
-			// temp.height = tile.height;
-			// tempCtx.putImageData(tileData, 0, 0);
-			
-			// buildCtx.drawImage(temp, xpos, ypos);
-		// } else {
-			// buildCtx.drawImage(tile, xpos, ypos);
-		// }
-		
 		if (xstep == 0 && ystep == 0) {
-			buildCtx.drawImage(player, xc - npc.player.xoff, yc - z - npc.player.yoff);
+			// Draw the player at moment of layer pass
+			renderPlayer();
 		}
+	}
+	
+	function renderPlayer(isGhost)
+	{
+		if (isGhost) {
+			buildCtx.globalAlpha = 0.5;
+		}
+		
+		var sx = npc.player.w * pdir, 
+			sy = 0, 
+			sw = npc.player.w, 
+			sh = npc.player.h, 
+			dx = xc - npc.player.xoff, 
+			dy = yc - npc.player.yoff;
+			
+		buildCtx.drawImage(player, sx, sy, sw, sh, dx, dy, sw, sh);		
+		buildCtx.globalAlpha = 1;
 	}
 	
     function searchNeighbors(xstep, ystep)
