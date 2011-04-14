@@ -78,7 +78,7 @@ $(function()
 	$(window).keydown(function(e) {
 		key = e.which;
 		
-		var gxtemp = gx, gytemp = gy;
+		var gxtemp = gx, gytemp = gy, pdirtemp = pdir;
 		
 		if (key == KEY_NW) {
 			gx  -= 1;
@@ -94,8 +94,19 @@ $(function()
 			pdir = 3;
 		}
 		
+		// Let them turn around without moving
+		if (pdir != pdirtemp) {
+			gx = gxtemp;
+			gy = gytemp;
+		}
+		
 		// Make sure a tile exists at coords
 		seed(gx, gy, steps);
+		
+		if (Math.abs(map[gx][gy].z - map[gxtemp][gytemp].z) > zstep) {
+			gx = gxtemp;
+			gy = gytemp;
+		}
 		
 		render();
 	});
