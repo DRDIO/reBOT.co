@@ -5,7 +5,7 @@ $(function() {
             $('#panel').toggle('blind', {direction: 'horizontal'}, 250);
         });
 
-    $('#setting-lock, #setting-random').buttonset();
+    $('#panel>div').buttonset();
 
     $('#panel').hide();    
 });

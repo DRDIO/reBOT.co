@@ -51,7 +51,9 @@ $(function()
 		zlimit = zstep * 5000,				// Height Limit of world (+-)
 		
 		nstep  = 32, 						// Noise Frequency
-		namp   = 32,						// Noise Amplitude
+		namp   = 24,						// Noise Amplitude
+		
+		fps    = 10,
 		
 		steps  = 32,						// Number of steps to generate out from player (init)
 		rstep  = 32,						// Number of tiles to render
@@ -66,13 +68,17 @@ $(function()
 		KEY_SW = 40;
 		
 	// Init Remaining Globals
-	var simplex, settingLock, settingRandom;
+	var simplex, settingLock, settingRandom, settingJetpack;
 				
 	build.width  = w;
 	build.height = h;
 			
 	// Manage change event for setting toggles
-    $('#panel input').change(init);	
+    $('#setting-lock input, #setting-random input').change(init);	
+	$('#setting-jetpack input').change(function() {
+		settingJetpack = $('#setting-jetpack input:checked').val();
+	});
+	
 	$('#setting-refresh').button().click(init);
 	
 	$(window).keydown(function(e) {
@@ -103,12 +109,11 @@ $(function()
 		// Make sure a tile exists at coords
 		seed(gx, gy, steps);
 		
-		if (Math.abs(map[gx][gy].z - map[gxtemp][gytemp].z) > zstep) {
+		// If jetpack is off, only zstep traversal (small blocks)
+		if (settingJetpack == 'off' && Math.abs(map[gx][gy].z - map[gxtemp][gytemp].z) > zstep) {
 			gx = gxtemp;
 			gy = gytemp;
 		}
-		
-		render();
 	});
 	
     function convertTerrain() 
@@ -133,9 +138,10 @@ $(function()
 	
 	function init()
 	{
-		simplex 	  = new SimplexNoise();
-		settingLock   = $('#setting-lock input:checked').val();
-		settingRandom = $('#setting-random input:checked').val();
+		simplex 	   = new SimplexNoise();
+		settingLock    = $('#setting-lock input:checked').val();
+		settingRandom  = $('#setting-random input:checked').val();	
+		settingJetpack = $('#setting-jetpack input:checked').val();		
 		
 		gx  = 0;
 		gy  = 0;
@@ -172,7 +178,12 @@ $(function()
 			var zrand, zlimit;
 						
 			if (settingRandom == 'simplex') {				
-				zrand = (simplex.noise(xstep / nstep, ystep / nstep) / 2 + 0.5);
+				zrand = simplex.noise(xstep / nstep, ystep / nstep);
+				
+				// TODO: Smooth location around spawn for climbing
+				zrand = smoothTerrain(zrand, xstep, ystep, namp);
+				
+				
 			} else {
 				zrand = Math.random();
 			}
@@ -190,6 +201,22 @@ $(function()
 		}
 		
 		map[xstep][ystep].z = z;
+	}
+	
+	function smoothTerrain(z, dx, dy, dr) 
+	{
+		// Quickly check if tile is within square of radius dr
+		if (Math.abs(dx) <= dr && Math.abs(dy) <= dr) {
+			// Get the distance from tile (circular)
+			var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+				
+			if (r < dr) {
+				// Use weights to smooth terrain to zstep values
+				return (r * z) / dr;
+			}
+		}
+		
+		return z;
 	}
 	
 	function render()
@@ -211,8 +238,15 @@ $(function()
 		// Overlay a translucent player to deal with obfuscation
 		renderPlayer(true);
 		
+		var time = new Date().getTime();
+		var time = Math.abs(time % 30000 - 15000) / 30000;
+		buildCtx.fillStyle = 'rgba(10, 50, 80, ' + time + ')';
+		buildCtx.fillRect(0, 0, w, h);
+		
 		// Put the build canvas onto the display canvas
 		$('#game').canvasContext().drawImage(build, 0, 0, w, h, 0, 0, w, h);
+		
+		setTimeout(render, 1000 / fps);
     }
 	
 	function renderTile(xstep, ystep, z) 
