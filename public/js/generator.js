@@ -6,10 +6,10 @@ $(function()
 			'dirt': {
 				'obj':   null,
 				'url':   'terrain/001x50.png',
-				'xoff':  21,
-				'yoff':  10,
-				'w':     42,
-				'h':     20,
+				'xoff':  32,
+				'yoff':  16,
+				'w':     64,
+				'h':     31,
 			}
 		},
 		npc = {
@@ -55,8 +55,8 @@ $(function()
 		
 		fps    = 10,
 		
-		steps  = 32,						// Number of steps to generate out from player (init)
-		rstep  = 32,						// Number of tiles to render
+		steps  = 20,						// Number of steps to generate out from player (init)
+		rstep  = 20,						// Number of tiles to render
 		gx     = 0,
 		gy     = 0;
 		pdir   = 3;							// Player direction (NW = 0, NE = 1, SE = 2, SW = 3)
@@ -181,7 +181,7 @@ $(function()
 				zrand = simplex.noise(xstep / nstep, ystep / nstep);
 				
 				// TODO: Smooth location around spawn for climbing
-				zrand = smoothTerrain(zrand, xstep, ystep, namp);
+				zrand = smoothTerrain(zrand, xstep, ystep, rstep);
 				
 				
 			} else {
