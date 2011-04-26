@@ -27,52 +27,97 @@
 
             <section id="game"></section>
 
+            <section id="panel">
+                <h2>Settings</h2>
+
+                <div>
+                    <label>Player Jetpack</label>
+                    <span id="setting-jetpack">
+                        <input id="setting-jetpack0" type="radio" name="setting-jetpack" value="off" /><label for="setting-jetpack0">Off</label>
+                        <input id="setting-jetpack1" type="radio" name="setting-jetpack" value="on" checked="checked" /><label for="setting-jetpack1">On</label>
+                    </span>
+                </div>
+
+                <div>
+                    <label>Disco Forever</label>
+                    <span id="setting-disco">
+                        <input id="setting-disco0" type="radio" name="setting-disco" value="off" checked="checked" /><label for="setting-disco0">Off</label>
+                        <input id="setting-disco1" type="radio" name="setting-disco" value="on" /><label for="setting-disco1">On</label>
+                    </span>
+                </div>
+
+                <div>
+                    <label>Drought</label>
+                    <span id="setting-drought">
+                        <input id="setting-drought0" type="radio" name="setting-drought" value="off" checked="checked" /><label for="setting-drought0">Off</label>
+                        <input id="setting-drought1" type="radio" name="setting-drought" value="on" /><label for="setting-drought1">On</label>
+                    </span>
+                </div>
+
+                <div>
+                    <label>Step Height</label>
+                    <span id="setting-zstep" class="slider" data-min="1" data-max="32" data-value="8" data-refresh="1"></span>
+                </div>
+
+                <div>
+                    <label>Render Radius</label>
+                    <span id="setting-rstep" class="slider" data-min="1" data-max="20" data-value="20" data-refresh="1"></span>
+                </div>
+
+                <div>
+                    <label>Noise Frequency</label>
+                    <span id="setting-nstep" class="slider" data-min="1" data-max="64" data-value="32" data-refresh="1"></span>
+                </div>
+
+                <div>
+                    <label>Noise Amplitude</label>
+                    <span id="setting-namp" class="slider" data-min="1" data-max="64" data-value="24" data-refresh="1"></span>
+                </div>
+
+                <div>
+                    <label>FPS</label>
+                    <span id="setting-fps" class="slider" data-min="1" data-max="120" data-value="30"></span>
+                </div>
+
+                <div>
+                    <label>Water Level</label>
+                    <span id="setting-lvlwater" class="slider" data-min="-16" data-max="16" data-value="-13"></span>
+                </div>
+
+                <div>
+                    <label>Beach Level</label>
+                    <span id="setting-lvlbeach" class="slider" data-min="-16" data-max="16" data-value="-10"></span>
+                </div>
+
+                <div>
+                    <label>Plain Level</label>
+                    <span id="setting-lvlplain" class="slider" data-min="-16" data-max="16" data-value="-5"></span>
+                </div>
+
+                <div>
+                    <label>Hill Level</label>
+                    <span id="setting-lvlhill" class="slider" data-min="-16" data-max="16" data-value="5"></span>
+                </div>
+
+                <div>
+                    <label>Mount Level</label>
+                    <span id="setting-lvlmount" class="slider" data-min="-16" data-max="16" data-value="10"></span>
+                </div>
+
+                <div>
+                    <label>Snow Level</label>
+                    <span id="setting-lvlsnow" class="slider" data-min="-16" data-max="16" data-value="13"></span>
+                </div>
+
+                <div>
+                    <label>Force Refresh</label>
+                    <button id="setting-refresh" />BOOM!</button>
+                </div>
+            </section>
+            
             <footer id="copyright">
-                <button id="button-edit">Edit</button>
                 <p>2011 <a href="http://dierobotdie.tumblr.com/">DieRobotDie</a></p>
             </footer>
-        </section>
-
-        <section id="panel">
-            <h2>Settings</h2>
-
-            <div>
-                <label>Random Algorithm</label>
-                <span id="setting-random">
-                    <input id="setting-random0" type="radio" name="setting-random" value="math" /><label for="setting-random0">Math</label>
-                    <input id="setting-random1" type="radio" name="setting-random" value="simplex" checked="checked" /><label for="setting-random1">Simplex</label>
-                </span>
-            </div>
-
-            <div>
-                <label>Terrain Lock</label>
-                <span id="setting-lock">
-                    <input id="setting-lock0" type="radio" name="setting-lock" value="flat" /><label for="setting-lock0">Flat</label>
-                    <input id="setting-lock1" type="radio" name="setting-lock" value="free" checked="checked" /><label for="setting-lock1">Freeform</label>
-                    <input id="setting-lock2" type="radio" name="setting-lock" value="lock" /><label for="setting-lock2">Locked</label>
-                </span>
-            </div>
-
-            <div>
-                <label>Player Jetpack</label>
-                <span id="setting-jetpack">
-                    <input id="setting-jetpack0" type="radio" name="setting-jetpack" value="off" /><label for="setting-jetpack0">Off</label>
-                    <input id="setting-jetpack1" type="radio" name="setting-jetpack" value="on" checked="checked" /><label for="setting-jetpack1">On</label>
-                </span>
-            </div>
-
-            <div>
-                <label>Disco Forever</label>
-                <span id="setting-disco">
-                    <input id="setting-disco0" type="radio" name="setting-disco" value="off" checked="checked" /><label for="setting-disco0">Off</label>
-                    <input id="setting-disco1" type="radio" name="setting-disco" value="on" /><label for="setting-disco1">On</label>
-                </span>
-            </div>
-
-            <div>
-                <label></label>
-                <button id="setting-refresh" />Refresh</button>
-            </div>
-        </section>
+        </section>        
     </body>
 </html>
