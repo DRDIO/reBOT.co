@@ -38,6 +38,20 @@ $(function()
                 'w':    64,
                 'h':    31
             },
+            'plain': {
+                'url':  'terrain/007.png',
+                'xoff': 32,
+                'yoff': 16,
+                'w':    64,
+                'h':    31
+            },
+            'hill': {
+                'url':  'terrain/006.png',
+                'xoff': 32,
+                'yoff': 16,
+                'w':    64,
+                'h':    31
+            },
             'player': {
                 'url':  'npc/001.png',
                 'xoff': 21,
@@ -86,6 +100,8 @@ $(function()
         zlimit = zstep * 5000,              // Height Limit of world (+-)
         zwater = zstep * -11,                // Sea Level
         zsand  = zstep * -8,
+        zplain = zstep * -4,
+        zhill  = zstep * 6,
         zstone = zstep * 10,
         zice   = zstep * 13,                // Mountain Tops
         zjump  = zstep * 2,                 // How high can player jump
@@ -108,15 +124,16 @@ $(function()
         KEY_SW = 40;
 
     // Init Remaining Globals
-    var simplex, settingLock, settingRandom, settingJetpack;
+    var simplex, settingLock, settingRandom, settingJetpack, settingDisco;
 
     build.width  = w;
     build.height = h;
 
     // Manage change event for setting toggles
     $('#setting-lock input, #setting-random input').change(init);
-    $('#setting-jetpack input').change(function() {
+    $('#setting-jetpack input, #setting-disco input').change(function() {
         settingJetpack = $('#setting-jetpack input:checked').val();
+        settingDisco   = $('#setting-disco input:checked').val();
     });
 
     $('#setting-refresh').button().click(init);
@@ -273,19 +290,28 @@ $(function()
                     var tile    = tiles.dirt;
                     var zsource = map[xstep][ystep].z;
 
+                    var xtile = xstep - gx, ytile = ystep - gy;
+                    var ztile = zsource - map[gx][gy].z;
+
+                    if (settingDisco == 'on') {
+                        zsource *= Math.random();
+                    }
+
                     if (zsource < zwater) {
                         tile    = tiles.water;
                         zsource = zwater;
                     } else if (zsource < zsand) {
                         tile    = tiles.sand;
+                    } else if (zsource < zplain) {
+                        tile    = tiles.plain;
                     } else if (zsource > zice) {
                         tile    = tiles.ice;
                     } else if (zsource > zstone) {
                         tile    = tiles.stone;
+                    } else if (zsource > zhill) {
+                        tile    = tiles.hill;
                     }
-                    
-                    var xtile = xstep - gx, ytile = ystep - gy;
-                    var ztile = zsource - map[gx][gy].z;
+
                     renderTile(tile, xtile, ytile, ztile);
                 }
             }
