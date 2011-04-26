@@ -1,6 +1,6 @@
 body {
     font-size: 12px;
-    font-family: 'Lobster', Arial, sans-serif;
+    font-family: Verdana, Arial, sans-serif;
     letter-spacing: 0.1em;
     background: #333;
     background-image:
@@ -24,14 +24,21 @@ body {
     padding-top: 8px;
     padding-bottom: 8px;
     height: 34px;
-
 }
 
     #title h1{
         font-size: 3em;
         line-height: 1em;
-        margin: 0;
-        color: #aaa;
+        margin: 0 0 0 2px;
+        font-family: 'Ubuntu';
+        font-style: italic;
+        color: #fece2f;
+    }
+
+    #title span {
+        color: #eee;
+        font-style: normal;
+        font-family: 'Lobster';
     }
 
 #game {
