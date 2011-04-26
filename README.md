@@ -1,18 +1,12 @@
-Die Robot Die
-=============
+reBOT.co
+========
 
 Introduction
 ------------
 
-'Die Robot Die' is an on going project by a team of Austin developers to
-create a web-based HTML5/JavaScript/Canvas game integrated into standard
-OAuth social networking systems.
-
-It is built off of the [Render Engine][1].
-
-[1]: http://renderengine.com/ "The Render Engine"
+reBOT.co is a web-based social game where players wander a post Utopian society as lost robots in search of starting their own civilizations. It is realtime and web-based, utilizing HTML5, jQuery, Canvas, CSS3, node.js, and Socket.IO. It will integrate with existing social networks through OAuth, when the moment strikes.
 
 Setup
 -----
 
-Right now it is extremely easy to setup. Simply download and click /public/index.html. Eventually it will require setting up node.js and socket.io and various other things, but that's later.
+Clone the repo and click /public/index.html. Congratulations, you are playing the development version of reBOT.co! As we progress in development, the setup procedures will become more complex, involving node.js and socket.IO setup along with basic knowledge of running a Linux server. But for now, easy jQuery goodness!
