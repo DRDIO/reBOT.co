@@ -1,5 +1,7 @@
 body {
-    font: 12px normal Helvetica, Verdana, Arial, sans-serif;
+    font-size: 12px;
+    font-family: 'Lobster', Arial, sans-serif;
+    letter-spacing: 0.1em;
     background: #333;
     background-image:
         -webkit-linear-gradient(rgba(32, 32, 32, 0.5) 0%, rgba(32, 32, 32, 0.5) 50%, rgba(32, 32, 32, 0.7) 50%, rgba(32, 32, 32, 0.7) 100%),

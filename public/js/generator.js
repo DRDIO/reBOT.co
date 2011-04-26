@@ -268,7 +268,7 @@ $(function()
         // Clear Canvases
         $('#game').clearRect(0, 0, w, h);
         buildCtx.clearRect(0, 0, w, h);
-        var watertiles = [];
+        var time = new Date().getTime();
 
         for (var xstep = gx - settings.rstep; xstep <= gx + settings.rstep; xstep++) {
             for (var ystep = gy - settings.rstep; ystep <= gy + settings.rstep; ystep++) {
@@ -302,7 +302,7 @@ $(function()
 
                     if (settings.drought == 'off' && ztype < settings.lvlwater * settings.zstep) {
                         ztile = settings.lvlwater * settings.zstep - map[gx][gy].z;
-                        tile  = eval('tiles.water' + Math.round(Math.random() + 1));
+                        tile  = eval('tiles.water' + (Math.round(time % 500 / 500) + 1));
                         renderTile(tile, xtile, ytile, ztile);
                     }
                 }
@@ -313,7 +313,7 @@ $(function()
         renderPlayer(true);
 
         // Time of Day
-        var time = new Date().getTime();
+        
             time = Math.abs(time % 30000 - 15000) / 30000;
         //buildCtx.fillStyle = 'rgba(10, 50, 80, ' + time + ')';
         //buildCtx.fillRect(0, 0, w, h);
