@@ -98,10 +98,10 @@ $(function()
         yc        = h / 2,
         zstep  = 8,
         zlimit = zstep * 5000,              // Height Limit of world (+-)
-        zwater = zstep * -11,                // Sea Level
-        zsand  = zstep * -8,
-        zplain = zstep * -4,
-        zhill  = zstep * 6,
+        zwater = zstep * -13,                // Sea Level
+        zsand  = zstep * -10,
+        zplain = zstep * -5,
+        zhill  = zstep * 5,
         zstone = zstep * 10,
         zice   = zstep * 13,                // Mountain Tops
         zjump  = zstep * 2,                 // How high can player jump
@@ -289,28 +289,29 @@ $(function()
                 if (xstep in map && ystep in map[xstep]) {
                     var tile    = tiles.dirt;
                     var zsource = map[xstep][ystep].z;
+                    var ztype   = zsource;
+
+                    if (settingDisco == 'on') {
+                        ztype *= Math.random();
+                    }
+
+                    if (ztype < zwater) {
+                        tile    = tiles.water;
+                        zsource = zwater;
+                    } else if (ztype < zsand) {
+                        tile    = tiles.sand;
+                    } else if (ztype < zplain) {
+                        tile    = tiles.plain;
+                    } else if (ztype > zice) {
+                        tile    = tiles.ice;
+                    } else if (ztype > zstone) {
+                        tile    = tiles.stone;
+                    } else if (ztype > zhill) {
+                        tile    = tiles.hill;
+                    }
 
                     var xtile = xstep - gx, ytile = ystep - gy;
                     var ztile = zsource - map[gx][gy].z;
-
-                    if (settingDisco == 'on') {
-                        zsource *= Math.random();
-                    }
-
-                    if (zsource < zwater) {
-                        tile    = tiles.water;
-                        zsource = zwater;
-                    } else if (zsource < zsand) {
-                        tile    = tiles.sand;
-                    } else if (zsource < zplain) {
-                        tile    = tiles.plain;
-                    } else if (zsource > zice) {
-                        tile    = tiles.ice;
-                    } else if (zsource > zstone) {
-                        tile    = tiles.stone;
-                    } else if (zsource > zhill) {
-                        tile    = tiles.hill;
-                    }
 
                     renderTile(tile, xtile, ytile, ztile);
                 }
