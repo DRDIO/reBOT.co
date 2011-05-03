@@ -12,7 +12,7 @@ var BOOTSTRAP = (function(self)
 
         // Core Sliders and Steps
         'fps':   {l: 'FPS',           v: 15, i: 5, a: 120, s: 5},
-        'zstep': {l: 'Step Height',   v: 8,  i: 1, a: 32,  s: 1, r: true},
+        'zstep': {l: 'Step Height',   v: 8,  i: 0, a: 32,  s: 1, r: true},
         'rstep': {l: 'Render Radius', v: 20, i: 1, a: 32,  s: 1, r: true},
 
         // Noise Terrain Generation
