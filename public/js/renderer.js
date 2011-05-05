@@ -62,7 +62,9 @@ var BOOTSTRAP = (function(self)
                     }
 
                     // type settings are percentages of max z range of map
-                    if (ztype < self.settings.lvlwater * zmax) {
+                    if (self.map[xstep][ystep].t) {
+                        tile = self.tiles[self.map[xstep][ystep].t];
+                    } else if (ztype < self.settings.lvlwater * zmax) {
                         tile    = self.tiles.mud;
                     } else if (ztype < self.settings.lvlbeach * zmax) {
                         tile    = self.tiles.sand;
@@ -94,10 +96,7 @@ var BOOTSTRAP = (function(self)
         self.renderPlayer(true);
 
         // Time of Day
-
-        time = Math.abs(time % 30000 - 15000) / 60000;
-        self.buildCtx.fillStyle = 'rgba(10, 50, 80, ' + time + ')';
-        self.buildCtx.fillRect(0, 0, self.w, self.h);
+        // self.timeOfDay();
 
         // Put the build canvas onto the display canvas
         $('#game').canvasContext().drawImage(self.build, 0, 0, self.w, self.h, 0, 0, self.w, self.h);
@@ -134,6 +133,13 @@ var BOOTSTRAP = (function(self)
 
         self.buildCtx.drawImage(self.tiles.player.cvs, sx, sy, sw, sh, dx, dy, sw, sh);
         self.buildCtx.globalAlpha = 1;
+    }
+
+    self.timeOfDay = function()
+    {
+        time = Math.abs(time % 30000 - 15000) / 60000;
+        self.buildCtx.fillStyle = 'rgba(10, 50, 80, ' + time + ')';
+        self.buildCtx.fillRect(0, 0, self.w, self.h);
     }
 
     return self;

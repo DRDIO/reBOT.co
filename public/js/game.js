@@ -54,7 +54,12 @@ var BOOTSTRAP = (function(self) {
             // Get the distance from tile (circular)
             var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
+            if (dr / 2 * Math.random() + 1 > r) {
+                self.map[dx][dy].t = 'road' + Math.ceil(Math.random() * 4);
+            }
+                
             if (r < dr) {
+                
                 return r * z / dr;
             }
         }

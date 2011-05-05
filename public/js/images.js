@@ -66,6 +66,34 @@ var BOOTSTRAP = (function(self)
                 'w':    64,
                 'h':    31
             },
+            'road1': {
+                'url':  'terrain/road1.png',
+                'xoff': 32,
+                'yoff': 16,
+                'w':    64,
+                'h':    31
+            },
+            'road2': {
+                'url':  'terrain/road2.png',
+                'xoff': 32,
+                'yoff': 16,
+                'w':    64,
+                'h':    31
+            },
+            'road3': {
+                'url':  'terrain/road2.png',
+                'xoff': 32,
+                'yoff': 16,
+                'w':    64,
+                'h':    31
+            },
+            'road4': {
+                'url':  'terrain/road4.png',
+                'xoff': 32,
+                'yoff': 16,
+                'w':    64,
+                'h':    31
+            },
             'player': {
                 'url':  'npc/001.png',
                 'xoff': 21,
