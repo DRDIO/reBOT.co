@@ -1,3 +1,9 @@
 [submodule "public/therenderengine"]
 	path = public/therenderengine
 	url = git://github.com/KevinNuut/TheRenderEngine.git
+[submodule "app/lib/socketio"]
+	path = app/lib/socketio
+	url = git://github.com/KevinNuut/Socket.IO-node.git
+[submodule "app/lib/connect"]
+	path = app/lib/connect
+	url = git://github.com/KevinNuut/connect.git

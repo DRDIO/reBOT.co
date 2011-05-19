@@ -1,0 +1,23 @@
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+// Configuration Variables, YAY!
+//
+exports.ipaddr   = '';
+exports.port     = 8080;
+exports.interval = 10000;
+exports.intIdle  = 300000;
+exports.intKick  = 1800000;
+
+exports.protocol        = 'http://';
+exports.domain          = 'CHAT_DOMAIN';
+exports.requestUrl      = 'http://www.tumblr.com/oauth/request_token';
+exports.accessUrl       = 'http://www.tumblr.com/oauth/access_token';
+exports.authorizeUrl    = 'http://www.tumblr.com/oauth/authorize';
+exports.authenticateUrl = 'http://www.tumblr.com/api/authenticate';
+
+exports.consumerKey    = 'TUMBLR_CONSUMER_KEY';
+exports.consumerSecret = 'TUMBLR_CONSUMER_SECRET';
+exports.callbackUrl    = exports.protocol + exports.domain + '/CALLBACK_URL';
+exports.fingerprint    = 'FINGERPRINT_MD5';
+
+exports.chatOps   = {'TUMBLR_NAME_1': '', 'TUMBLR_NAME_2': ''};
+exports.chatRooms = {'ROOM_1': '', 'ROOM_2': ''};
