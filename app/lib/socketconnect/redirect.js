@@ -13,7 +13,7 @@ module.exports = function(config, app)
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // Callback Page (Parse XML from Tumblr Authenticate, store user in session, redirect to index)
     //
-    app.get('/callback', function(req, res)
+    app.get(config.callbackRelUrl, function(req, res)
     {
         var parsedUrl = url.parse(req.url, true);
 
@@ -46,7 +46,7 @@ module.exports = function(config, app)
                                     console.log(req.session.user.name);
                                     
                                     // Redirect to home and start socket
-                                    res.writeHead(303, {'Location': '/'});
+                                    res.writeHead(303, {'Location': config.indexRelUrl});
                                     res.end();
                                 }
                             }
@@ -70,36 +70,41 @@ module.exports = function(config, app)
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // Clear out user and refresh entire session
     //
-    app.get('/clear', function(req, res) {
+    app.get(config.clearRelUrl, function(req, res) {
         delete req.session;
         
-        res.writeHead(303, {'Location': '/'});
+        res.writeHead(303, {'Location': config.indexRelUrl});
         res.end();
     });
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // Index Page (If user exists, start chat)
     //
-    app.get('/:page?', function(req, res)
+    app.get(config.indexRelUrl, function(req, res)
     {
         try {
-            if (!('user' in req.session)) {
-                // Store the page for when callback occurs
-                req.session.page = req.params.page || '';
+            if ('session' in req) {
+                if (!('user' in req.session)) {
+                    // Store the page for when callback occurs
+                    req.session.page = req.params.page || '';
 
-                oa.getOAuthRequestToken(function(error, token, secret, results)
-                {
-                    req.session.secret = secret;
-                    res.writeHead(303, {'Location': config.authorizeUrl + '?oauth_token=' + token});
-                    res.end();
-                });
+                    oa.getOAuthRequestToken(function(error, token, secret, results)
+                    {
+                        req.session.secret = secret;
+                        res.writeHead(303, {'Location': config.authorizeUrl + '?oauth_token=' + token});
+                        res.end();
+                    });
+                } else {
+                    console.log('reading file');
+                    fs.readFile(__dirname + '/../../../' + config.publicPath + '/' + config.indexPage, function(err, data) {
+                        if (!err) {
+                            res.writeHead(200, {'Content-type': 'text/html'});
+                            res.end(data || '');
+                        }
+                    });
+                }
             } else {
-                fs.readFile(__dirname + '../../../public/index.html', function(err, data) {
-                    if (!err) {
-                        res.writeHead(200, {'Content-type': 'text/html'});
-                        res.end(data || '');
-                    }
-                });
+                throw 'no session in this request!';
             }
         } catch(err) {
             console.log(err.message);

@@ -49,10 +49,10 @@ module.exports = function(config, worldobj)
                 }
             }),
             socket(function() { return server; }, store, worldobj),
-            // Route all public pages to the public folder
-            connect.static(__dirname + '/../website'),
             // Route oauth redirects to the redirect script
-            connect.router(function(app) { redirect(config, app); })
+            connect.router(function(app) { redirect(config, app); }),
+            // Route all public pages to the public folder
+            connect.static(__dirname + '/../../../' + config.publicPath)
         );
 
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
