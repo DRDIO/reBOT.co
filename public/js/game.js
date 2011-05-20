@@ -70,7 +70,6 @@ var BOOTSTRAP = (function(self) {
     self.userApproved = function(user)
     {
         console.log(user);
-        alert('high five');
     }
 
     return self;

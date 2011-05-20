@@ -15,14 +15,20 @@ var BOOTSTRAP = (function(self)
 {
     self.init = function()
     {
-        self.initSocket();
         self.initDom();
         self.initKeyboard();
-            
-        $.when.apply($, self.loadImages()).done(function() {
+
+        // All images and sockets must be connected first
+        var promises = self.loadImages();
+        promises.push(self.initSocket());
+
+        // Then render and start game
+        $.when.apply($, self.loadImages()).done(function()
+        {
+            console.log('rendering');
             self.initRenderer();
             self.initGame();
-        });
+       });
     }
     
     return self;

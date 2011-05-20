@@ -4,7 +4,8 @@ var BOOTSTRAP = (function(self)
     self.socket   = {
         approved: false,
         timeoutId: null,
-        attempts: 0
+        attempts: 0,
+        promise: $.Deferred()
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -22,6 +23,7 @@ var BOOTSTRAP = (function(self)
         self.socketio.on('connect', function()
         {
             console.log('connected');
+            self.socket.promise.resolve();
             
             self.socketSend('init', self.cookieRead('connect.sid'));
 
@@ -63,6 +65,8 @@ var BOOTSTRAP = (function(self)
         });
 
         self.socketConnect();
+
+        return self.socket.promise;
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
