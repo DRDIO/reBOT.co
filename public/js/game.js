@@ -67,5 +67,11 @@ var BOOTSTRAP = (function(self) {
         return z;
     }
 
+    self.userApproved = function(user)
+    {
+        console.log(user);
+        alert('high five');
+    }
+
     return self;
 }(BOOTSTRAP || {}));

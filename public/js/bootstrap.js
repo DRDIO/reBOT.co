@@ -1,6 +1,8 @@
 var scripts = [
     'noise',        // Simplex Noise Package
     'seedrandom',   // Random Seed Generator
+    'cookie',
+    'socket',    
     'dom',
     'game',
     'images',
@@ -13,6 +15,7 @@ var BOOTSTRAP = (function(self)
 {
     self.init = function()
     {
+        self.initSocket();
         self.initDom();
         self.initKeyboard();
             
@@ -21,6 +24,7 @@ var BOOTSTRAP = (function(self)
             self.initGame();
         });
     }
+    
     return self;
 }({}));
 
@@ -34,32 +38,7 @@ $(function()
     $.when.apply($, deferred).done(function() {
         BOOTSTRAP.init();
     });
-
-    socketConnect();
 });
-
-function socketConnect()
-{
-    if (typeof io == 'object') {        
-        socket = new io.Socket();
-        socket.on('connect', function()
-        {
-            console.log('connected');
-            socket.send({playerMove: ['meow', 'pop', 'lock']});
-        });
-
-        socket.on('message', function(response)
-        {
-            console.log('test');
-            console.log(response);
-        });
-
-        socket.connect();
-    } else {
-        console.log('still waiting');
-        settimeout(socketConnect, 1000);
-    }
-}
 
 function loadScript(key, dependents)
 {

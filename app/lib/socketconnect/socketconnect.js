@@ -41,7 +41,7 @@ io.Listener.prototype.dynamicReceive = function(worldobj)
 {
     return function(response) 
     {
-        try {
+        try {            
             for (var first in response) break;
 
             if (typeof response[first] != 'object') {
@@ -77,13 +77,6 @@ module.exports = function(serverLambda, store, worldobj) {
                 listener = io.listen(serverLambda());
                 listener.setStore(store);
                 
-                // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-                // Setup featured listener.chatRooms that last forever
-                //
-                if ('init' in worldobj && typeof worldobj.init == 'function') {
-                    worldobj.init.apply(listener);
-                }
-
                 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                 // Form on connection callback
                 //
