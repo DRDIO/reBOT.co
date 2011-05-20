@@ -1,12 +1,12 @@
-var BOOTSTRAP = (function(self)
+var BOOTSTRAP = (function($$)
 {
-    self.initDom = function()
+    $$.initDom = function()
     {
         $('<div/>').attr('id', 'tooltip').addClass('ui-widget ui-widget-content ui-corner-all').appendTo('body').hide();
 
         $('#panel>div').buttonset();
 
-        for (var i in self.initSettings) {
+        for (var i in $$.initSettings) {
             (function(key, properties) {
                 $('<div/>')
                     .insertAfter('#panel>h2')
@@ -27,16 +27,16 @@ var BOOTSTRAP = (function(self)
                             var key   = $(this).attr('id').substr(8);
 
                             $(ui.handle).html(value);
-                            self.settings[key] = parseInt(value);
+                            $$.settings[key] = parseInt(value);
                             
                         }).bind('slide', function(e, ui) {
                             if (properties.r) {
-                                self.initGame();
+                                $$.initGame();
                             }
                         })
                         .slider()
                     );
-            })(i, self.initSettings[i]);
+            })(i, $$.initSettings[i]);
         }
 
         $('#panel').hover(function() {
@@ -46,24 +46,24 @@ var BOOTSTRAP = (function(self)
         });
 
         $('#setting-refresh').click(function() {
-            self.randomseed = Math.random();
-            self.initGame();
+            $$.randomseed = Math.random();
+            $$.initGame();
         });
 
         $('#setting-hash').click(function() {
-            self.updateHash();
+            $$.updateHash();
         });
     };
 
-    self.updateHash = function()
+    $$.updateHash = function()
     {
         // Update URL with developer settings
         var hash = '';
-        for (var i in self.settings) {
-            hash += i + ':' + self.settings[i] + ',';
+        for (var i in $$.settings) {
+            hash += i + ':' + $$.settings[i] + ',';
         }
-        location.hash = hash + 'gx:' + self.gx + ',gy:' + self.gy;
+        location.hash = hash + 'gx:' + $$.player.gx + ',gy:' + $$.player.gy;
     }
     
-    return self;
+    return $$;
 }(BOOTSTRAP || {}));

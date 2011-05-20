@@ -2,7 +2,8 @@ var scripts = [
     'noise',        // Simplex Noise Package
     'seedrandom',   // Random Seed Generator
     'cookie',
-    'socket',    
+    'socket',
+    'player',
     'dom',
     'game',
     'images',
@@ -11,27 +12,27 @@ var scripts = [
     'settings'
 ];
 
-var BOOTSTRAP = (function(self)
+var BOOTSTRAP = (function($$)
 {
-    self.init = function()
+    $$.init = function()
     {
-        self.initDom();
-        self.initKeyboard();
+        $$.initDom();
+        $$.initKeyboard();
 
         // All images and sockets must be connected first
-        var promises = self.loadImages();
-        promises.push(self.initSocket());
+        var promises = $$.loadImages();
+        promises.push($$.initSocket());
 
         // Then render and start game
-        $.when.apply($, self.loadImages()).done(function()
+        $.when.apply($, $$.loadImages()).done(function()
         {
             console.log('rendering');
-            self.initRenderer();
-            self.initGame();
+            $$.initRenderer();
+            $$.initGame();
        });
     }
     
-    return self;
+    return $$;
 }({}));
 
 $(function()

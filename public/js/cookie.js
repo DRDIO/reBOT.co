@@ -1,6 +1,6 @@
-var BOOTSTRAP = (function(self)
+var BOOTSTRAP = (function($$)
 {
-    self.cookieCreate = function(name, value, days)
+    $$.cookieCreate = function(name, value, days)
     {
         var expires = '';
 
@@ -13,7 +13,7 @@ var BOOTSTRAP = (function(self)
         document.cookie = name + '=' + value + expires + '; path=/';
     }
 
-    self.cookieRead = function(name) {
+    $$.cookieRead = function(name) {
         var nameEQ = name + '=';
         var ca = document.cookie.split(';');
 
@@ -31,9 +31,9 @@ var BOOTSTRAP = (function(self)
         return null;
     }
 
-    self.cookieErase = function(name) {
-        self.cookieCreate(name, '', -1);
+    $$.cookieErase = function(name) {
+        $$.cookieCreate(name, '', -1);
     }
 
-    return self;
+    return $$;
 }(BOOTSTRAP || {}));

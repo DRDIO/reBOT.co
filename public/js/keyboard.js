@@ -1,44 +1,58 @@
-var BOOTSTRAP = (function(self)
+var BOOTSTRAP = (function($$)
 {
-    self.initKeyboard = function()
+    $$.KEY_NW = 37,        // Directional keys
+    $$.KEY_NE = 38,
+    $$.KEY_SE = 39,
+    $$.KEY_SW = 40;
+
+    $$.initKeyboard = function()
     {
         $(window).keydown(function(e) {
-            var key    = e.which;
-            var gxtemp = self.gx, gytemp = self.gy, pdirtemp = self.pdir;
+            var key      = e.which,
+                pdirtemp = $$.player.dir;
 
-            if (key == self.KEY_NW) {
-                self.gx  -= 1;
-                self.pdir = 0;
-            } else if (key == self.KEY_NE) {
-                self.gy  -= 1;
-                self.pdir = 1;
-            } else if (key == self.KEY_SE) {
-                self.gx  += 1;
-                self.pdir = 2;
-            } else if (key == self.KEY_SW) {
-                self.gy  += 1;
-                self.pdir = 3;
+            if (key == $$.KEY_NW) {
+                $$.player.nx  -= 1;
+                $$.player.dir = 0;
+            } else if (key == $$.KEY_NE) {
+                $$.player.ny  -= 1;
+                $$.player.dir = 1;
+            } else if (key == $$.KEY_SE) {
+                $$.player.nx  += 1;
+                $$.player.dir = 2;
+            } else if (key == $$.KEY_SW) {
+                $$.player.ny  += 1;
+                $$.player.dir = 3;
             }
 
             // Let them turn around without moving
-            if (self.pdir != pdirtemp) {
-                self.gx = gxtemp;
-                self.gy = gytemp;
+            if (!$$.player.walking && $$.player.dir != pdirtemp) {
+                $$.player.nx = $$.player.gx;
+                $$.player.ny = $$.player.gy;
+                return;
             }
 
-            // Make sure a tile exists at coords
-            self.seed(self.gx, self.gy, self.settings.rstep);
-
-            var userTile = self.map[self.gx][self.gy].z;
-            var nextTile = self.map[gxtemp][gytemp].z;
+            var gz = $$.map[$$.player.gx][$$.player.gy].z;
+            var nz = $$.map[$$.player.nx][$$.player.ny].z;
 
             // If jetpack is off, only small z traversal (small blocks)
-            if (!self.settings.jetpack && Math.abs(userTile - nextTile) > self.settings.zjump) {
-                self.gx = gxtemp;
-                self.gy = gytemp;
+            if (!$$.settings.jetpack && Math.abs(gz - nz) > $$.settings.zjump) {
+                $$.player.nx = $$.player.gx;
+                $$.player.ny = $$.player.gy;
+                return;
             }
+
+            $$.player.walking   = true;
+            $$.player.tileCount = 0;
+            
+            // Make sure a tile exists at coords
+            $$.seed($$.player.nx, $$.player.ny, $$.settings.rstep);
+        });
+
+        $(window).keyup(function(e) {
+            $$.player.walking = false;
         });
     };
 
-    return self;
+    return $$;
 }(BOOTSTRAP || {}));

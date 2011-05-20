@@ -1,8 +1,8 @@
-var BOOTSTRAP = (function(self) 
+var BOOTSTRAP = (function($$) 
 {
     // Build out core objects
-    self.imgDir = 'img/',
-    self.tiles  = {
+    $$.imgDir = 'img/',
+    $$.tiles  = {
             'dirt': {
                 'url':  'terrain/001x50.png',
                 'xoff': 32,
@@ -102,16 +102,16 @@ var BOOTSTRAP = (function(self)
                 'h'   : 42
             }
         },
-        self.map      = {},
-        self.promises = [];
+        $$.map      = {},
+        $$.promises = [];
 
-    self.loadImages = function()
+    $$.loadImages = function()
     {
         // Create terrain object (TODO: Loop)
-        for (var i in self.tiles) {
+        for (var i in $$.tiles) {
             (function(tile, promise) {
                 tile.img        = new Image();
-                tile.img.src    = self.imgDir + tile.url;
+                tile.img.src    = $$.imgDir + tile.url;
                 tile.img.onload = function() {
                     tile.cvs        = document.createElement('canvas');
                     tile.cvs.width  = tile.img.width;
@@ -123,12 +123,12 @@ var BOOTSTRAP = (function(self)
 
                     promise.resolve();
                 }
-            })(self.tiles[i], self.promises[self.promises.push($.Deferred()) - 1]);
+            })($$.tiles[i], $$.promises[$$.promises.push($.Deferred()) - 1]);
         }
 
         // When all images load, run INIT()
-        return self.promises;
+        return $$.promises;
     };
 
-    return self;
+    return $$;
 }(BOOTSTRAP || {}));

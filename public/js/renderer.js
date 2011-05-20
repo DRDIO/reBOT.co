@@ -1,34 +1,34 @@
-var BOOTSTRAP = (function(self) 
+var BOOTSTRAP = (function($$) 
 {
-    self.initRenderer = function()
+    $$.initRenderer = function()
     {
         // Implement Game Canvas
         $('#game').canvas();
 
-        self.w        = $('#game').canvasWidth(),  // Setup common dimensions
-        self.h        = $('#game').canvasHeight(),
-        self.xc       = self.w / 2,
-        self.yc       = self.h / 2,
-        self.build    = document.createElement('canvas'),
-        self.buildCtx = self.build.getContext('2d');
+        $$.w        = $('#game').canvasWidth(),  // Setup common dimensions
+        $$.h        = $('#game').canvasHeight(),
+        $$.xc       = $$.w / 2,
+        $$.yc       = $$.h / 2,
+        $$.build    = document.createElement('canvas'),
+        $$.buildCtx = $$.build.getContext('2d');
 
-        self.build.width  = self.w;
-        self.build.height = self.h;
+        $$.build.width  = $$.w;
+        $$.build.height = $$.h;
 
         // Create Custom Player
-        self.tiles.player.ctx.clearRect(0, 0, self.tiles.player.cvs.width, self.tiles.player.cvs.height);
-        self.tiles.player.ctx.drawImage(self.tiles.player.img, 0, 0);
-        self.tintCanvas(self.tiles.player.ctx,
-            self.tiles.player.cvs.width,
-            self.tiles.player.cvs.height,
+        $$.tiles.player.ctx.clearRect(0, 0, $$.tiles.player.cvs.width, $$.tiles.player.cvs.height);
+        $$.tiles.player.ctx.drawImage($$.tiles.player.img, 0, 0);
+        $$.tintCanvas($$.tiles.player.ctx,
+            $$.tiles.player.cvs.width,
+            $$.tiles.player.cvs.height,
             Math.round(Math.random() * 128),
             Math.round(Math.random() * 128),
             Math.round(Math.random() * 128));
 
-        self.render();
+        $$.render();
     }
 
-    self.tintCanvas = function(ctx, w, h, r, g, b)
+    $$.tintCanvas = function(ctx, w, h, r, g, b)
     {
         var imgData = ctx.getImageData(0, 0, w, h);
         for (var i = 0; i < imgData.data.length; i += 4) {
@@ -40,107 +40,111 @@ var BOOTSTRAP = (function(self)
         ctx.putImageData(imgData, 0, 0);
     }
 
-    self.render = function()
+    $$.render = function()
     {
-        $('#game').clearRect(0, 0, self.build.width, self.build.height);
-        self.buildCtx.clearRect(0, 0, self.build.width, self.build.height);
+        $('#game').clearRect(0, 0, $$.build.width, $$.build.height);
+        $$.buildCtx.clearRect(0, 0, $$.build.width, $$.build.height);
 
         // Clear Canvases
         var time = new Date().getTime();
 
-        for (var xstep = self.gx - self.settings.rstep; xstep <= self.gx + self.settings.rstep; xstep++) {
-            for (var ystep = self.gy - self.settings.rstep; ystep <= self.gy + self.settings.rstep; ystep++) {
-                if (xstep in self.map && ystep in self.map[xstep]) {
-                    var tile    = self.tiles.dirt;
-                    var zsource = self.map[xstep][ystep].z;
-                    var zrel    = self.map[self.gx][self.gy].z;
+        for (var xstep = $$.player.gx - $$.settings.rstep; xstep <= $$.player.gx + $$.settings.rstep; xstep++) {
+            for (var ystep = $$.player.gy - $$.settings.rstep; ystep <= $$.player.gy + $$.settings.rstep; ystep++) {
+                if (xstep in $$.map && ystep in $$.map[xstep]) {
+                    var tile    = $$.tiles.dirt;
+                    var zsource = $$.map[xstep][ystep].z;
+                    var zrel    = $$.map[$$.player.gx][$$.player.gy].z;
                     var ztype   = zsource;
-                    var zmax    = (self.settings.namp1 + self.settings.namp2) / 100;
+                    var zmax    = ($$.settings.namp1 + $$.settings.namp2) / 100;
 
-                    if (self.settings.random) {
+                    if ($$.settings.random) {
                         ztype *= Math.random();
                     }
 
                     // type settings are percentages of max z range of map
-                    if (self.map[xstep][ystep].t) {
-                        tile = self.tiles[self.map[xstep][ystep].t];
-                    } else if (ztype < self.settings.lvlwater * zmax) {
-                        tile    = self.tiles.mud;
-                    } else if (ztype < self.settings.lvlbeach * zmax) {
-                        tile    = self.tiles.sand;
-                    } else if (ztype < self.settings.lvlplain * zmax) {
-                        tile    = self.tiles.plain;
-                    } else if (ztype > self.settings.lvlsnow * zmax) {
-                        tile    = self.tiles.ice;
-                    } else if (ztype > self.settings.lvlmount * zmax) {
-                        tile    = self.tiles.stone;
-                    } else if (ztype > self.settings.lvlhill * zmax) {
-                        tile    = self.tiles.hill;
+                    if ($$.map[xstep][ystep].t) {
+                        tile = $$.tiles[$$.map[xstep][ystep].t];
+                    } else if (ztype < $$.settings.lvlwater * zmax) {
+                        tile    = $$.tiles.mud;
+                    } else if (ztype < $$.settings.lvlbeach * zmax) {
+                        tile    = $$.tiles.sand;
+                    } else if (ztype < $$.settings.lvlplain * zmax) {
+                        tile    = $$.tiles.plain;
+                    } else if (ztype > $$.settings.lvlsnow * zmax) {
+                        tile    = $$.tiles.ice;
+                    } else if (ztype > $$.settings.lvlmount * zmax) {
+                        tile    = $$.tiles.stone;
+                    } else if (ztype > $$.settings.lvlhill * zmax) {
+                        tile    = $$.tiles.hill;
                     }
 
-                    var xtile = xstep - self.gx, ytile = ystep - self.gy;
+                    var xtile = xstep - $$.player.gx, ytile = ystep - $$.player.gy;
                     var ztile = zsource - zrel;
 
-                    self.renderTile(tile, xtile, ytile, ztile);
+                    $$.renderTile(tile, xtile, ytile, ztile);
 
-                    if (!self.settings.drought && ztype < self.settings.lvlwater * zmax) {
-                        ztile = self.settings.lvlwater * zmax - zrel;
-                        tile  = self.tiles['water' + (Math.round(time % 500 / 500) + 1)];
-                        self.renderTile(tile, xtile, ytile, ztile);
+                    if (!$$.settings.drought && ztype < $$.settings.lvlwater * zmax) {
+                        ztile = $$.settings.lvlwater * zmax - zrel;
+                        tile  = $$.tiles['water' + (Math.round(time % 500 / 500) + 1)];
+                        $$.renderTile(tile, xtile, ytile, ztile);
                     }
                 }
             }
         }
 
         // Overlay a translucent player to deal with obfuscation
-        self.renderPlayer(true);
+        $$.renderPlayer(true);
 
         // Time of Day
-        // self.timeOfDay();
+        // $$.timeOfDay();
 
         // Put the build canvas onto the display canvas
-        $('#game').canvasContext().drawImage(self.build, 0, 0, self.w, self.h, 0, 0, self.w, self.h);
+        $('#game').canvasContext().drawImage($$.build, 0, 0, $$.w, $$.h, 0, 0, $$.w, $$.h);
 
-        setTimeout(self.render, 1000 / self.settings.fps);
+        setTimeout($$.render, 1000 / $$.settings.fps);
     }
 
-    self.renderTile = function(tile, xstep, ystep, z)
+    $$.renderTile = function(tile, xstep, ystep, z)
     {
-        // Translate 3D coordinates to 2D Isometric
-        var xpos = self.xc + xstep * tile.xoff - ystep * tile.xoff - tile.xoff;
-        var ypos = self.yc + xstep * tile.yoff + ystep * tile.yoff - tile.yoff - z * self.settings.zstep;
+        if ($$.player.tileCount < $$.player.tileInt) {
+            
+        }
 
-        self.buildCtx.drawImage(tile.cvs, xpos, ypos);
+        // Translate 3D coordinates to 2D Isometric
+        var xpos = $$.xc + xstep * tile.xoff - ystep * tile.xoff - tile.xoff;
+        var ypos = $$.yc + xstep * tile.yoff + ystep * tile.yoff - tile.yoff - z * $$.settings.zstep;
+
+        $$.buildCtx.drawImage(tile.cvs, xpos, ypos);
 
         if (xstep == 0 && ystep == 0) {
             // Draw the player at moment of layer pass
-            self.renderPlayer();
+            $$.renderPlayer();
         }
     }
 
-    self.renderPlayer = function(isGhost)
+    $$.renderPlayer = function(isGhost)
     {
         if (isGhost) {
-            self.buildCtx.globalAlpha = 0.5;
+            $$.buildCtx.globalAlpha = 0.5;
         }
 
-        var sx = self.tiles.player.w * self.pdir,
+        var sx = $$.tiles.player.w * $$.player.dir,
             sy = 0,
-            sw = self.tiles.player.w,
-            sh = self.tiles.player.h,
-            dx = self.xc - self.tiles.player.xoff,
-            dy = self.yc - self.tiles.player.yoff;
+            sw = $$.tiles.player.w,
+            sh = $$.tiles.player.h,
+            dx = $$.xc - $$.tiles.player.xoff,
+            dy = $$.yc - $$.tiles.player.yoff;
 
-        self.buildCtx.drawImage(self.tiles.player.cvs, sx, sy, sw, sh, dx, dy, sw, sh);
-        self.buildCtx.globalAlpha = 1;
+        $$.buildCtx.drawImage($$.tiles.player.cvs, sx, sy, sw, sh, dx, dy, sw, sh);
+        $$.buildCtx.globalAlpha = 1;
     }
 
-    self.timeOfDay = function()
+    $$.timeOfDay = function()
     {
         time = Math.abs(time % 30000 - 15000) / 60000;
-        self.buildCtx.fillStyle = 'rgba(10, 50, 80, ' + time + ')';
-        self.buildCtx.fillRect(0, 0, self.w, self.h);
+        $$.buildCtx.fillStyle = 'rgba(10, 50, 80, ' + time + ')';
+        $$.buildCtx.fillRect(0, 0, $$.w, $$.h);
     }
 
-    return self;
+    return $$;
 }(BOOTSTRAP || {}));

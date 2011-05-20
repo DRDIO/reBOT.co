@@ -1,10 +1,8 @@
-var BOOTSTRAP = (function(self) 
+var BOOTSTRAP = (function($$) 
 {
-    self.randomseed = 'apple',
-    self.gx         = 0,         // Global Coordinates of Player
-    self.gy         = 0;
+    $$.randomseed = 'apple';
 
-    self.initSettings = {
+    $$.initSettings = {
         // On/Off Settings
         'jetpack': {l: 'Player Jetpack', v: 1, i: 0, a: 1, s: 1},
         'random':  {l: 'Random Tiles',   v: 0, i: 0, a: 1, s: 1},
@@ -34,21 +32,21 @@ var BOOTSTRAP = (function(self)
         var pairs = location.hash.substr(1).split(',');
         for (var i in pairs) {
             var keyvalue = pairs[i].split(':');
-            if (keyvalue[0] in self.initSettings) {
-                self.initSettings[keyvalue[0]].v = parseInt(keyvalue[1]);
+            if (keyvalue[0] in $$.initSettings) {
+                $$.initSettings[keyvalue[0]].v = parseInt(keyvalue[1]);
             } else if (keyvalue[0] == 'gx') {
-                self.gx = parseInt(keyvalue[1]);
+                $$.player.gx = parseInt(keyvalue[1]);
             } else if (keyvalue[0] == 'gy') {
-                self.gy = parseInt(keyvalue[1]);
+                $$.player.gy = parseInt(keyvalue[1]);
             }
         }
     }
 
     // A quick mapping for ease of reference in game
-    self.settings = {};
-    for (var i in self.initSettings) {
-        self.settings[i] = self.initSettings[i].v;
+    $$.settings = {};
+    for (var i in $$.initSettings) {
+        $$.settings[i] = $$.initSettings[i].v;
     }
 
-    return self;
+    return $$;
 }(BOOTSTRAP || {}));
