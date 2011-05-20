@@ -43,8 +43,6 @@ module.exports = function(config, app)
                                         'avatar': tumblr['@']['avatar-url']
                                     }
 
-                                    console.log(req.session.user.name);
-                                    
                                     // Redirect to home and start socket
                                     res.writeHead(303, {'Location': config.indexRelUrl});
                                     res.end();
@@ -95,7 +93,6 @@ module.exports = function(config, app)
                         res.end();
                     });
                 } else {
-                    console.log('reading file');
                     fs.readFile(__dirname + '/../../../' + config.publicPath + '/' + config.indexPage, function(err, data) {
                         if (!err) {
                             res.writeHead(200, {'Content-type': 'text/html'});

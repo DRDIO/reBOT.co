@@ -34,7 +34,32 @@ $(function()
     $.when.apply($, deferred).done(function() {
         BOOTSTRAP.init();
     });
+
+    socketConnect();
 });
+
+function socketConnect()
+{
+    if (typeof io == 'object') {        
+        socket = new io.Socket();
+        socket.on('connect', function()
+        {
+            console.log('connected');
+            socket.send({playerMove: ['meow', 'pop', 'lock']});
+        });
+
+        socket.on('message', function(response)
+        {
+            console.log('test');
+            console.log(response);
+        });
+
+        socket.connect();
+    } else {
+        console.log('still waiting');
+        settimeout(socketConnect, 1000);
+    }
+}
 
 function loadScript(key, dependents)
 {

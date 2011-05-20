@@ -6,21 +6,24 @@ var config = require('../config/game'),
 
 game.prototype.init = function()
 {
-    // I think the scope of this will be listener from ./socketconnect
-    console.log('game init');
+    console.log('init: this = listener');
+}
+
+game.prototype.connect = function()
+{
+    console.log('connect: this = client');
 };
 
-game.prototype.onMessage = function(response)
-{
-    // Scope should be the client from ./socketconnect
-    console.log('game message');
-    console.log(response);
-};
+game.prototype.playerMove = function(x, y) {
+    // We do a variety of things and then we update everyone else
 
-game.prototype.onDisconnect = function()
+    this.listener.broadcast('echo');
+    this.send('shh');
+}
+
+game.prototype.disconnect = function()
 {
-    // Scope should be the client from ./socketconnect
-    console.log('game disconnecting');
-};
+    console.log('disconnect: this = client');
+}
 
 module.exports = new game();
