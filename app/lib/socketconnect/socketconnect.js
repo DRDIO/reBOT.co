@@ -3,38 +3,6 @@
 //
 var io = require('../socketio');
     
-// // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-// Middleware prefix for Connect stack
-//
-io.Listener.prototype.prefixWithMiddleware = function (fn) {
-    var self = this;
-    return function (client) {
-        var dummyRes = {
-            writeHead: null
-        };
-
-        if (!client.request) {
-            client.request = {
-                url: null,
-                method: null
-            }
-        }
-        // Throw the request down the Connect middleware stack
-        // so we can use Connect middleware for free.
-        self.server.handle(client.request, dummyRes, function () {
-            fn(client, client.request, dummyRes);
-        });
-    };
-};
-
-io.Listener.prototype.setStore = function(store) {
-    this.store = store;
-}
-
-io.Listener.prototype.getStore = function() {
-    return this.store;
-}
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // Create exports function to call
 //
@@ -58,8 +26,8 @@ module.exports = function(serverLambda, store, worldobj) {
                     try {
                         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                         // Setup message and disconnect events
-                        client.on('message', worldobj.onMessage);
-                        client.on('disconnect', worldobj.onDisconnect);
+                        client.on('message', listener.dynamicMessage(worldobj));
+                        client.on('disconnect', worldobj.dynamicMessage);
                     } catch (err) {
                         console.log(err.message);
                         console.log(err.stack);
@@ -73,3 +41,66 @@ module.exports = function(serverLambda, store, worldobj) {
         }
     };
 };
+
+io.Listener.prototype.setStore = function(store) {
+    this.store = store;
+}
+
+io.Listener.prototype.getStore = function() {
+    return this.store;
+}
+
+// // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+// Middleware prefix for Connect stack
+//
+io.Listener.prototype.prefixWithMiddleware = function(fn)
+{
+    var self = this;
+    return function (client) {
+        var dummyRes = {
+            writeHead: null
+        };
+
+        if (!client.request) {
+            client.request = {
+                url: null,
+                method: null
+            }
+        }
+        // Throw the request down the Connect middleware stack
+        // so we can use Connect middleware for free.
+        self.server.handle(client.request, dummyRes, function () {
+            fn(client, client.request, dummyRes);
+        });
+    };
+};
+
+io.Listener.prototype.dynamicMessage = function(worldobj)
+{
+    console.log(this);
+    
+    return function(response) {
+        try {
+            for (var first in response) break;
+
+            if (typeof response.first != 'object') {
+                throw 'Invalid JSON string to call a method';
+            }
+
+            if (!(first in worldobj) || typeof worldobj[first] != 'function') {
+                throw 'JSON function does not exist in world object';
+            }
+            
+            worldobj[first](response.first);
+
+        } catch (err) {
+            console.log(err.message);
+            
+            if ('onMessage' in worldobj && typeof worldobj.onMessage == 'function') {
+                worldobj.onMessage(response);
+            } else {
+                console.log('World object has no onMessage to call');
+            }
+        }
+    }
+}
