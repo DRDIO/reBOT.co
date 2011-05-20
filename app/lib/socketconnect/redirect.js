@@ -1,13 +1,12 @@
-var config = require('../config/config'),
-    url    = require('url'),
+var url    = require('url'),
     fs     = require('fs'),
-    xml2js = require('./xml2js'),
-    oauth  = require('./oauth');
+    xml2js = require('../xml2js'),
+    oauth  = require('../oauth');
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 // Redirect from oauth, build tumblr account and pass into session
 //
-module.exports = function(app)
+module.exports = function(config, app)
 {
     var oa = new oauth.OAuth(config.requestUrl, config.accessUrl, config.consumerKey, config.consumerSecret, '1.0', config.callbackUrl, 'HMAC-SHA1');
     
@@ -44,6 +43,8 @@ module.exports = function(app)
                                         'avatar': tumblr['@']['avatar-url']
                                     }
 
+                                    console.log(req.session.user.name);
+                                    
                                     // Redirect to home and start socket
                                     res.writeHead(303, {'Location': '/'});
                                     res.end();
@@ -74,5 +75,38 @@ module.exports = function(app)
         
         res.writeHead(303, {'Location': '/'});
         res.end();
+    });
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // Index Page (If user exists, start chat)
+    //
+    app.get('/:page?', function(req, res)
+    {
+        try {
+            if (!('user' in req.session)) {
+                // Store the page for when callback occurs
+                req.session.page = req.params.page || '';
+
+                oa.getOAuthRequestToken(function(error, token, secret, results)
+                {
+                    req.session.secret = secret;
+                    res.writeHead(303, {'Location': config.authorizeUrl + '?oauth_token=' + token});
+                    res.end();
+                });
+            } else {
+                fs.readFile(__dirname + '../../../public/index.html', function(err, data) {
+                    if (!err) {
+                        res.writeHead(200, {'Content-type': 'text/html'});
+                        res.end(data || '');
+                    }
+                });
+            }
+        } catch(err) {
+            console.log(err.message);
+            console.log(err.stack);
+
+            res.writeHead(200, {'Content-type': 'text/html'});
+            res.end('Unable to redirect TumblrChat (R1).');
+        }
     });
 }
