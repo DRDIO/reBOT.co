@@ -13,7 +13,7 @@ var BOOTSTRAP = (function($$)
     //
     $$.initSocket = function() 
     {
-        console.log('initializing');
+        // console.log('initializing');
         
         $$.socketio = new io.Socket(null, {rememberTransport: false});
 
@@ -22,7 +22,7 @@ var BOOTSTRAP = (function($$)
         //
         $$.socketio.on('connect', function()
         {
-            console.log('connected');
+            // console.log('connected');
             $$.socket.promise.resolve();
             
             $$.socketSend('init', $$.cookieRead('connect.sid'));
@@ -59,8 +59,8 @@ var BOOTSTRAP = (function($$)
 
                 $$[first](response[first]);
             } catch (err) {
-                console.log(err);
-                console.log('Unable to find proper method');
+                // console.log(err);
+                // console.log('Unable to find proper method');
             }
         });
 
@@ -73,7 +73,7 @@ var BOOTSTRAP = (function($$)
     // SOCKETCONNECT: Setup and attempt to connect to the server
     //
     $$.socketConnect = function() {
-        console.log('connecting');
+        // console.log('connecting');
         
         if (typeof $$.socketio != 'undefined') {
             // Try connecting 3 times (reset to 0 on successful connect)

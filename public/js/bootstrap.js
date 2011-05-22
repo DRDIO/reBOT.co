@@ -60,6 +60,6 @@ function loadScript(key, dependents)
             loadScript(key, false);
         });
     } else {
-        return $.getScript('/js/' + key + '.js');
+        return $.getScript('/js/game/' + key + '.js');
     }
 }

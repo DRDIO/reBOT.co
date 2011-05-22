@@ -64,7 +64,7 @@ var BOOTSTRAP = (function($$) {
 
     $$.userApproved = function(user)
     {
-        console.log(user);
+        // console.log(user);
     }
 
     return $$;

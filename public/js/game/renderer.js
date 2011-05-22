@@ -46,35 +46,13 @@ var BOOTSTRAP = (function($$)
         $$.buildCtx.clearRect(0, 0, $$.build.width, $$.build.height);
 
         // Get the times stamp and set the temporary position to the last player tile
-        var time  = new Date().getTime(),
-            xtemp = $$.player.gx,
-            ytemp = $$.player.gy;
+        var time  = new Date().getTime();
 
-        // Subtle player movements between tiles
-        // Includes walking and jumping animations / calculations
-        if ($$.player.tileCount && $$.player.tileCount <= $$.player.tileInt) {
-            // calculate partial player position between tiles
-            var apart = $$.player.tileCount / $$.player.tileInt;
-                xtemp = $$.player.nx * apart + $$.player.gx;
-                ytemp = $$.player.ny * apart + $$.player.gy;
-
-            // Once we have completed an animation cycle, reset if key is down or stop if not walking
-            // Update last player tile to next tile
-            if ($$.player.tileCount == $$.player.tileInt) {
-                if (!$$.player.keydown) {
-                    $$.player.walking = false;
-                } else if ($$.player.walking) {
-                    $$.player.tileCount = 1;
-                }
-                
-                xtemp = $$.player.gx += $$.player.nx;
-                ytemp = $$.player.gy += $$.player.ny;
-            }
-
-            // This condition will stop when tileCount stays larger than tileInt
-            // This is reset when key is pressed or held for walking
-            $$.player.tileCount++;
-        }
+        // Returns (exact) x, y, z, (map tile) xtile, ytile, and (animation) key
+        var playerPos = $$.player.getInfo();
+        
+        xtemp = playerPos.x;
+        ytemp = playerPos.y;
         
         for (var xstep = $$.player.gx - $$.settings.rstep; xstep <= $$.player.gx + $$.settings.rstep; xstep++) {
             for (var ystep = $$.player.gy - $$.settings.rstep; ystep <= $$.player.gy + $$.settings.rstep; ystep++) {

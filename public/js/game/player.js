@@ -51,10 +51,10 @@ var BOOTSTRAP = (function($$) {
 
             // Let them turn around without moving
             if (!$$.player.walking && $$.player.dir != dir) {
-                console.log('turning');
+                // console.log('turning');
                 $$.player.dir = dir;
-                $$.player.nx = 0;
-                $$.player.ny = 0;
+                // $$.player.nx = 0;
+                // $$.player.ny = 0;
                 return;
             }
 
@@ -73,7 +73,7 @@ var BOOTSTRAP = (function($$) {
 
             // If jetpack is off, only small z traversal (small blocks)
             if (!$$.settings.jetpack && Math.abs(gz - nz) > $$.settings.zjump) {
-                console.log('too high');
+                // console.log('too high');
                 $$.player.nx = 0;
                 $$.player.ny = 0;
                 return;
@@ -87,6 +87,42 @@ var BOOTSTRAP = (function($$) {
             $$.seed($$.player.gx + $$.player.nx, $$.player.gy + $$.player.ny, $$.settings.rstep);
 
             $$.player.walking = true;
+        },
+
+        getInfo: function() {
+            var xtemp = $$.player.gx,
+                ytemp = $$.player.gy;
+                
+            // Subtle player movements between tiles
+            // Includes walking and jumping animations / calculations
+            if ($$.player.tileCount && $$.player.tileCount <= $$.player.tileInt) {
+                // calculate partial player position between tiles
+                var apart = $$.player.tileCount / $$.player.tileInt;
+                    xtemp = $$.player.nx * apart + $$.player.gx;
+                    ytemp = $$.player.ny * apart + $$.player.gy;
+
+                // Once we have completed an animation cycle, reset if key is down or stop if not walking
+                // Update last player tile to next tile
+                if ($$.player.tileCount == $$.player.tileInt) {
+                    if (!$$.player.keydown) {
+                        $$.player.walking = false;
+                    } else if ($$.player.walking) {
+                        $$.player.tileCount = 1;
+                    }
+
+                    xtemp = $$.player.gx += $$.player.nx;
+                    ytemp = $$.player.gy += $$.player.ny;
+                }
+
+                // This condition will stop when tileCount stays larger than tileInt
+                // This is reset when key is pressed or held for walking
+                $$.player.tileCount++;
+            }
+
+            return {
+                x: xtemp,
+                y: ytemp
+            }
         }
     };
 
