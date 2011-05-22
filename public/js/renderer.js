@@ -45,9 +45,37 @@ var BOOTSTRAP = (function($$)
         $('#game').clearRect(0, 0, $$.build.width, $$.build.height);
         $$.buildCtx.clearRect(0, 0, $$.build.width, $$.build.height);
 
-        // Clear Canvases
-        var time = new Date().getTime();
+        // Get the times stamp and set the temporary position to the last player tile
+        var time  = new Date().getTime(),
+            xtemp = $$.player.gx,
+            ytemp = $$.player.gy;
 
+        // Subtle player movements between tiles
+        // Includes walking and jumping animations / calculations
+        if ($$.player.tileCount && $$.player.tileCount <= $$.player.tileInt) {
+            // calculate partial player position between tiles
+            var apart = $$.player.tileCount / $$.player.tileInt;
+                xtemp = $$.player.nx * apart + $$.player.gx;
+                ytemp = $$.player.ny * apart + $$.player.gy;
+
+            // Once we have completed an animation cycle, reset if key is down or stop if not walking
+            // Update last player tile to next tile
+            if ($$.player.tileCount == $$.player.tileInt) {
+                if (!$$.player.keydown) {
+                    $$.player.walking = false;
+                } else if ($$.player.walking) {
+                    $$.player.tileCount = 1;
+                }
+                
+                xtemp = $$.player.gx += $$.player.nx;
+                ytemp = $$.player.gy += $$.player.ny;
+            }
+
+            // This condition will stop when tileCount stays larger than tileInt
+            // This is reset when key is pressed or held for walking
+            $$.player.tileCount++;
+        }
+        
         for (var xstep = $$.player.gx - $$.settings.rstep; xstep <= $$.player.gx + $$.settings.rstep; xstep++) {
             for (var ystep = $$.player.gy - $$.settings.rstep; ystep <= $$.player.gy + $$.settings.rstep; ystep++) {
                 if (xstep in $$.map && ystep in $$.map[xstep]) {
@@ -78,8 +106,10 @@ var BOOTSTRAP = (function($$)
                         tile    = $$.tiles.hill;
                     }
 
-                    var xtile = xstep - $$.player.gx, ytile = ystep - $$.player.gy;
-                    var ztile = zsource - zrel;
+                    // x and ytile are the coordinates relative to center of screen
+                    var xtile = xstep - xtemp,
+                        ytile = ystep - ytemp,
+                        ztile = zsource - zrel;
 
                     $$.renderTile(tile, xtile, ytile, ztile);
 
@@ -106,17 +136,13 @@ var BOOTSTRAP = (function($$)
 
     $$.renderTile = function(tile, xstep, ystep, z)
     {
-        if ($$.player.tileCount < $$.player.tileInt) {
-            
-        }
-
         // Translate 3D coordinates to 2D Isometric
         var xpos = $$.xc + xstep * tile.xoff - ystep * tile.xoff - tile.xoff;
         var ypos = $$.yc + xstep * tile.yoff + ystep * tile.yoff - tile.yoff - z * $$.settings.zstep;
 
         $$.buildCtx.drawImage(tile.cvs, xpos, ypos);
 
-        if (xstep == 0 && ystep == 0) {
+        if (Math.floor(xstep) == 0 && Math.floor(ystep) == 0) {
             // Draw the player at moment of layer pass
             $$.renderPlayer();
         }
