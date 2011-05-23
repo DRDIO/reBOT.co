@@ -1,4 +1,4 @@
-define(['sprite'], function() {
+define(['entity/sprite'], function() {
     var SpriteAlbum = function() {
         this.album = {};
     }

@@ -1,4 +1,4 @@
-define(['settings', 'simplexnoise'], function() {
+define(['tool/settings', 'tool/simplexnoise'], function() {
     var World = function() {
         this.init();
     }

@@ -1,4 +1,4 @@
-define(['settings', 'keyboard'], function(keyboard) {
+define(['tool/settings', 'tool/keyboard'], function(keyboard) {
     $('#panel>div').buttonset();
 
     for (var i in BOOTSTRAP.initSettings) {

@@ -22,7 +22,6 @@ var BOOTSTRAP = (function($$)
         //
         $$.socketio.on('connect', function()
         {
-            // console.log('connected');
             $$.socket.promise.resolve();
             
             $$.socketSend('init', $$.cookieRead('connect.sid'));
