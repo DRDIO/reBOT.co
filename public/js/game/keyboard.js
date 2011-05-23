@@ -1,5 +1,5 @@
-define(['player'], function() {
-    var keyboard = function() {
+define(function() {
+    var Keyboard = function() {
         // Directional keys
         this.KEY_NW       = 65,
         this.KEY_NE       = 87,
@@ -11,7 +11,7 @@ define(['player'], function() {
         this.keyPressed = false;
     }
 
-    keyboard.prototype.press = function(key) {
+    Keyboard.prototype.press = function(key) {
         this.keyPressed = key;
 
         if (key == this.KEY_SETTINGS) {
@@ -23,7 +23,7 @@ define(['player'], function() {
         return 'unknown';
     }
 
-    keyboard.prototype.mapDirection = function()
+    Keyboard.prototype.mapDirection = function()
     {
         var direction = null;
 
@@ -45,17 +45,17 @@ define(['player'], function() {
         return direction;
     }
 
-    keyboard.prototype.release = function(key) {
+    Keyboard.prototype.release = function(key) {
         this.keyPressed = false;
     }
 
-    keyboard.prototype.isPressed = function() {
+    Keyboard.prototype.isPressed = function() {
         return this.keyPressed != false;
     }
 
-    keyboard.prototype.getKey = function() {
+    Keyboard.prototype.getKey = function() {
         return this.keyPressed;
     }
 
-    APP.keyboard = new keyboard();
+    APP.keyboard = new Keyboard();
 });

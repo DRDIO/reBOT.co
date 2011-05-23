@@ -40,7 +40,6 @@ define(['settings', 'keyboard'], function(keyboard) {
             if (action == 'settings') {
                 BOOTSTRAP.toggleSettings();
             } else if (action == 'move') {
-                console.log(APP.keyboard.getKey());
                 var dir = APP.keyboard.mapDirection();
                 BOOTSTRAP.player.move(dir);
             }
@@ -77,14 +76,3 @@ define(['settings', 'keyboard'], function(keyboard) {
         location.hash = hash + 'gx:' + BOOTSTRAP.player.gx + ',gy:' + BOOTSTRAP.player.gy;
     }
 });
-
-var BOOTSTRAP = (function($$)
-{
-    $$.initDom = function()
-    {
-
-    };
-
-
-    return $$;
-}(BOOTSTRAP || {}));

@@ -1,9 +1,12 @@
+define(function() {
+    APP.PLAYER_PATH = '/img/npc/002.png';
+});
+
 var BOOTSTRAP = (function($$) {    
     $$.player = {
         // player states (jumping and falling mutually exclusive)
         walking:   false,
-        jumping:   false,
-        falling:   false,
+        jumping:   0,
 
         // Animation steps
         tileCount: 0,
@@ -12,6 +15,9 @@ var BOOTSTRAP = (function($$) {
         // last (or current x) before animation cycle
         gx:        0,
         gy:        0,
+
+        qx: 0,
+        qy: 0,
 
         // Player direction (NW = 0, NE = 1, SE = 2, SW = 3),
         dir: 3,
@@ -22,11 +28,11 @@ var BOOTSTRAP = (function($$) {
         ny: 0,
         nz: 0,
 
-        jumpMinStep: 2,
-        jumpMaxStep: 4,
+        jumpMin: 2,
+        jumpMax: 4,
 
-        fallMinStep: 2,
-        fallMaxStep: 8,
+        fallMin: -2,
+        fallMax: -8,
 
         move: function(dir) {
             $$.player.nx = 0;
@@ -53,75 +59,79 @@ var BOOTSTRAP = (function($$) {
             if (!$$.player.walking && $$.player.dir != dir) {
                 // console.log('turning');
                 $$.player.dir = dir;
-                // $$.player.nx = 0;
-                // $$.player.ny = 0;
                 return;
             }
 
             $$.player.dir = dir;
-            
-            var gz = $$.map[$$.player.gx][$$.player.gy].z;
-            var nz = $$.map[$$.player.gx + $$.player.nx][$$.player.gy + $$.player.ny].z;
 
-            $$.player.nz = nz - gz;
+            var playerTile = APP.world.getTile($$.player.gx, $$.player.gy);
+            var nextTile   = APP.world.getTile($$.player.gx + $$.player.nx, $$.player.gy + $$.player.ny);
 
-            if ($$.player.nz > $$.player.jumpstep) {
-                $$.player.jumping = true;
-            } else if ($$.player.nz < -$$.player.jumpstep) {
-                $$.player.falling = true;
-            }
+            var gz = playerTile.getZ();
+            var zNext = nextTile.getZ();
 
-            // If jetpack is off, only small z traversal (small blocks)
-            if (!$$.settings.jetpack && Math.abs(gz - nz) > $$.settings.zjump) {
-                // console.log('too high');
-                $$.player.nx = 0;
-                $$.player.ny = 0;
+            $$.player.gz = gz;
+            $$.player.nz = zNext - gz;
+
+            if ($$.player.nz > $$.player.jumpMax || $$.player.nz < $$.player.fallMax) {
+                console.log('not safe');
                 return;
+            } else if ($$.player.nz > $$.player.jumpMin || $$.player.nz < $$.player.fallMin) {
+                $$.player.jumping = 3;
             }
 
             if (!$$.player.walking && dir == $$.player.dir) {
-                $$.player.tileCount = 1;
+                $$.player.tileCount = 0;
             }
-
-            // Make sure a tile exists at coords
-            $$.seed($$.player.gx + $$.player.nx, $$.player.gy + $$.player.ny, $$.settings.rstep);
 
             $$.player.walking = true;
         },
 
         getInfo: function() {
             var xtemp = $$.player.gx,
-                ytemp = $$.player.gy;
+                ytemp = $$.player.gy,
+                ztemp = APP.world.getTile($$.player.gx, $$.player.gy).getZ();
                 
             // Subtle player movements between tiles
             // Includes walking and jumping animations / calculations
-            if ($$.player.tileCount && $$.player.tileCount <= $$.player.tileInt) {
+            if ($$.player.walking && $$.player.tileCount < $$.player.tileInt) {
                 // calculate partial player position between tiles
-                var apart = $$.player.tileCount / $$.player.tileInt;
+                var apart = ($$.player.tileCount + 1) / $$.player.tileInt;
                     xtemp = $$.player.nx * apart + $$.player.gx;
                     ytemp = $$.player.ny * apart + $$.player.gy;
+                    ztemp = $$.player.nz * apart + $$.player.gz;
+
+                // This condition will stop when tileCount stays larger than tileInt
+                // This is reset when key is pressed or held for walking
+                $$.player.tileCount++;
 
                 // Once we have completed an animation cycle, reset if key is down or stop if not walking
                 // Update last player tile to next tile
                 if ($$.player.tileCount == $$.player.tileInt) {
                     if (!APP.keyboard.isPressed()) {
-                        $$.player.walking = false;
-                    } else if ($$.player.walking) {
-                        $$.player.tileCount = 1;
+                        $$.player.walking = false;                        
                     }
+
+                    $$.player.tileCount = 0;
+                    $$.player.jumping   = 0;
 
                     xtemp = $$.player.gx += $$.player.nx;
                     ytemp = $$.player.gy += $$.player.ny;
+                    ztemp = $$.player.gz += $$.player.nz;
+
+                    $$.player.nx = $$.player.nx;
+                    $$.player.ny = $$.player.ny;
                 }
-
-                // This condition will stop when tileCount stays larger than tileInt
-                // This is reset when key is pressed or held for walking
-                $$.player.tileCount++;
             }
-
+            
             return {
-                x: xtemp,
-                y: ytemp
+                // x and y Map related to actual map matrix coordinates
+                // x and y Raw are floats putting a player on or between tiles on a map
+                xMap: $$.player.gx,
+                yMap: $$.player.gy,
+                xRaw: xtemp,
+                yRaw: ytemp,
+                zRaw: ztemp
             }
         }
     };
