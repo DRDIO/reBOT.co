@@ -1,42 +1,61 @@
-var BOOTSTRAP = (function($$)
-{
-    $$.KEY_NW = 37,        // Directional keys
-    $$.KEY_NE = 38,
-    $$.KEY_SE = 39,
-    $$.KEY_SW = 40;
+define(['player'], function() {
+    var keyboard = function() {
+        // Directional keys
+        this.KEY_NW       = 65,
+        this.KEY_NE       = 87,
+        this.KEY_SE       = 68,
+        this.KEY_SW       = 83;
+        this.KEY_SETTINGS = 81;
 
-    $$.initKeyboard = function()
+        this.isShift    = false;
+        this.keyPressed = false;
+    }
+
+    keyboard.prototype.press = function(key) {
+        this.keyPressed = key;
+
+        if (key == this.KEY_SETTINGS) {
+            return 'settings';
+        } else if (key == this.KEY_NW || key == this.KEY_NE || key == this.KEY_SE || key == this.KEY_SW) {
+            return 'move';
+        }
+
+        return 'unknown';
+    }
+
+    keyboard.prototype.mapDirection = function()
     {
-        $(window).keydown(function(e) {
-            var key      = e.which,
-                dir      = null;
+        var direction = null;
 
-            switch (key) {
-                case $$.KEY_NW:
-                    dir = 0;
-                    break;
-                case $$.KEY_NE:
-                    dir = 1;
-                    break;
-                case $$.KEY_SE:
-                    dir = 2;
-                    break;
-                case $$.KEY_SW:
-                    dir = 3;
-                    break;
-            }
+        switch (this.keyPressed) {
+            case this.KEY_NW:
+                direction = 0;
+                break;
+            case this.KEY_NE:
+                direction = 1;
+                break;
+            case this.KEY_SE:
+                direction = 2;
+                break;
+            case this.KEY_SW:
+                direction = 3;
+                break;
+        }
 
-            if (dir != null) {
-                $$.player.move(dir);
-            }
-            
-            $$.player.keydown = true;
-        });
+        return direction;
+    }
 
-        $(window).keyup(function(e) {
-            $$.player.keydown = false;
-        });
-    };
+    keyboard.prototype.release = function(key) {
+        this.keyPressed = false;
+    }
 
-    return $$;
-}(BOOTSTRAP || {}));
+    keyboard.prototype.isPressed = function() {
+        return this.keyPressed != false;
+    }
+
+    keyboard.prototype.getKey = function() {
+        return this.keyPressed;
+    }
+
+    APP.keyboard = new keyboard();
+});

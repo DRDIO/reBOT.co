@@ -104,7 +104,7 @@ var BOOTSTRAP = (function($$) {
                 // Once we have completed an animation cycle, reset if key is down or stop if not walking
                 // Update last player tile to next tile
                 if ($$.player.tileCount == $$.player.tileInt) {
-                    if (!$$.player.keydown) {
+                    if (!APP.keyboard.isPressed()) {
                         $$.player.walking = false;
                     } else if ($$.player.walking) {
                         $$.player.tileCount = 1;

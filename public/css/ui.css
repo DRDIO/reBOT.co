@@ -11,22 +11,30 @@ body {
 }
 
 #page {
-    width: 960px;
+    width: 640px;
     height: 480px;
     position: absolute;
     top: 50%;
     left: 50%;
-    margin-left: -480px;
+    margin-left: -320px;
     margin-top: -240px;
+    overflow: hidden;
 }
 
-#title {
+#main {
+    width: 960px;
+    height: 400px;
+    overflow: hidden;
+    clear: both;
+}
+
+.title {
     padding-top: 8px;
     padding-bottom: 8px;
     height: 34px;
 }
 
-    #title h1{
+    .title h1{
         font-size: 3em;
         line-height: 1em;
         margin: 0 0 0 2px;
@@ -35,10 +43,15 @@ body {
         color: #fece2f;
     }
 
-    #title span {
+    .title em, .title span {
         color: #eee;
         font-style: normal;
         font-family: 'Lobster';
+    }
+
+    .title span {
+        color: #777;
+        font-size: 0.7em;
     }
 
 #game {
@@ -71,9 +84,6 @@ body {
     }
 
 #copyright {
-    clear: both;
-    width: inherit;
-    overflow: hidden;
     padding-top: 8px;
     height: 22px;
 }
@@ -199,3 +209,20 @@ body {
     width: auto;
     min-width: 1em;
 }
+
+#loading {
+    width: 360px;
+    height: 120px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -180px;
+    margin-top: -60px;
+    font-size: 1.5em;
+    color: #eee;
+}
+
+    #loading .title {
+        height: 51px;
+    }

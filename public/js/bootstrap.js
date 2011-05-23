@@ -1,6 +1,13 @@
-var scripts = [
-    'noise',        // Simplex Noise Package
-    'seedrandom',   // Random Seed Generator
+var SCRIPT_CORE = [
+    'jquery',
+    '/js/lib/jquery/jqueryui.js',
+];
+
+var SCRIPT_GAME = [
+    '/js/lib/jquery/canvas.js',
+    '/socket.io/socket.io.js',
+    'simplexnoise',
+    'seedrandom',
     'cookie',
     'socket',
     'player',
@@ -12,54 +19,15 @@ var scripts = [
     'settings'
 ];
 
-var BOOTSTRAP = (function($$)
-{
-    $$.init = function()
-    {
-        $$.initDom();
-        $$.initKeyboard();
+var APP = {};
 
-        // All images and sockets must be connected first
-        var promises = $$.loadImages();
-        promises.push($$.initSocket());
+$('#loading section').html('Loading Core Scripts');
 
-        // Then render and start game
-        $.when.apply($, $$.loadImages()).done(function()
-        {
-            console.log('rendering');
-            $$.initRenderer();
-            $$.initGame();
-       });
-    }
-    
-    return $$;
-}({}));
+require({baseUrl: '/js/game'}, SCRIPT_CORE, function($) {
+        $('#loading section').html('Loading Game Scripts');
 
-$(function()
-{
-    var deferred = [];
-    for (var i in scripts) {
-        deferred.push(loadScript(scripts[i], false));
-    }
-
-    $.when.apply($, deferred).done(function() {
-        BOOTSTRAP.init();
-    });
-});
-
-function loadScript(key, dependents)
-{
-    if (dependents) {
-        var deferred = [];
-
-        for (var i in dependents) {
-            deferred.push(loadScript(i, dependents[i]));
-        }
-
-        return $.when.apply($, deferred).done(function() {
-            loadScript(key, false);
+        require(SCRIPT_GAME, function() {
+            BOOTSTRAP.init()
         });
-    } else {
-        return $.getScript('/js/game/' + key + '.js');
     }
-}
+);

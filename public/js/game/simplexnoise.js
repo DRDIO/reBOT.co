@@ -1,5 +1,4 @@
-var BOOTSTRAP = (function($$) 
-{
+define(['settings', 'seedrandom'], function() {
     // Ported from Stefan Gustavson's java implementation
     // http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
     // Read Stefan's excellent paper for details on how this code works.
@@ -10,9 +9,9 @@ var BOOTSTRAP = (function($$)
      * You can pass in a random number generator object if you like.
      * It is assumed to have a random() method.
      */
-    $$.SimplexNoise = function(r)
+    var SimplexNoise = function(r)
     {
-            if (r == undefined) r = Math;
+      if (r == undefined) r = Math;
       this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],
                                      [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
                                      [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
@@ -39,12 +38,12 @@ var BOOTSTRAP = (function($$)
         [2,1,0,3],[0,0,0,0],[0,0,0,0],[0,0,0,0],[3,1,0,2],[0,0,0,0],[3,2,0,1],[3,2,1,0]];
     };
 
-    $$.SimplexNoise.prototype.dot = function(g, x, y)
+    SimplexNoise.prototype.dot = function(g, x, y)
     {
             return g[0]*x + g[1]*y;
     };
 
-    $$.SimplexNoise.prototype.noise = function(xin, yin)
+    SimplexNoise.prototype.noise = function(xin, yin)
     {
       var n0, n1, n2; // Noise contributions from the three corners
       // Skew the input space to determine which simplex cell we're in
@@ -100,5 +99,6 @@ var BOOTSTRAP = (function($$)
       return 70.0 * (n0 + n1 + n2);
     };
 
-    return $$;
-}(BOOTSTRAP || {}));
+    Math.seedrandom(BOOTSTRAP.randomseed);
+    APP.simplex = new SimplexNoise();
+});

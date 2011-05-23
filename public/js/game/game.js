@@ -1,11 +1,31 @@
 var BOOTSTRAP = (function($$) {    
-    $$.simplex     = null;
-    
+    $$.init = function()
+    {
+        $('#loading section').html('Connecting &amp; Loading Images');
+
+        $$.initDom();
+
+        // All images and sockets must be connected first
+        var promises = $$.loadImages();
+        promises.push($$.initSocket());
+
+        // Then render and start game
+        $.when.apply($, promises).done(function()
+        {
+            $$.initRenderer();
+            $$.initGame();
+            
+            // When everything is setup, allow mouse and keyboard movements
+            APP.attachEvents();
+
+            $('#page').fadeIn(250);
+            $('#loading').stop().fadeOut(250);
+       });
+    }
+
     $$.initGame = function()
     {
-        // Set the seed, get a simplex noise object and clear the map
-        Math.seedrandom($$.randomseed);
-        $$.simplex = new $$.SimplexNoise();
+        // Set the seed, get a simplex noise object and clear the map        
         $$.map     = {};
         
         // Seed our center area (render will start in initRenderer or timeout)
@@ -32,8 +52,8 @@ var BOOTSTRAP = (function($$) {
     {
         var z, zrand, zlimit;
 
-        var zrand1 = $$.simplex.noise(xstep / $$.settings.nstep1, ystep / $$.settings.nstep1) * $$.settings.namp1;
-        var zrand2 = $$.simplex.noise(xstep / $$.settings.nstep2, ystep / $$.settings.nstep2) * $$.settings.namp2;
+        var zrand1 = APP.simplex.noise(xstep / $$.settings.nstep1, ystep / $$.settings.nstep1) * $$.settings.namp1;
+        var zrand2 = APP.simplex.noise(xstep / $$.settings.nstep2, ystep / $$.settings.nstep2) * $$.settings.namp2;
 
         // TODO: Smooth location around spawn for climbing
         zrand = zrand1 + zrand2;        

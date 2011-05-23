@@ -48,5 +48,15 @@ var BOOTSTRAP = (function($$)
         $$.settings[i] = $$.initSettings[i].v;
     }
 
+    $$.toggleSettings = function() {
+        if ($('#panel').is(':hidden')) {
+            $('#page').animate({width: '960px', marginLeft: '-480px'}, 250);
+            $('#panel').fadeIn(250);
+        } else {
+            $('#page').animate({width: '640px', marginLeft: '-320px'}, 250);
+            $('#panel').fadeOut(250);
+        }
+    }
+
     return $$;
 }(BOOTSTRAP || {}));
