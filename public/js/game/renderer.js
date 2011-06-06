@@ -42,8 +42,8 @@ var BOOTSTRAP = (function($$)
 
     $$.render = function()
     {
-        $('#game').clearRect(0, 0, $$.build.width, $$.build.height);
-        $$.buildCtx.clearRect(0, 0, $$.build.width, $$.build.height);
+        // $('#game').clearRect(0, 0, $$.build.width, $$.build.height);
+        // $$.buildCtx.clearRect(0, 0, $$.build.width, $$.build.height);
 
         // Get the times stamp and set the temporary position to the last player tile
         var time  = new Date().getTime();

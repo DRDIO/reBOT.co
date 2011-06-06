@@ -1,5 +1,57 @@
-define(function() {
+define(['entity/sprite'], function() {
     APP.PLAYER_PATH = '/img/npc/002.png';
+    
+    var Player = function() {
+        
+    }
+    
+    Player.prototype = new Entity();
+    Player.prototype.constructor = Player;
+    
+    Player.prototype.getInfo = function() {
+        
+        // Subtle player movements between tiles
+        // Includes walking and jumping animations / calculations
+        if ($$.player.walking && $$.player.tileCount < $$.player.tileInt) {
+            // calculate partial player position between tiles
+            var apart = ($$.player.tileCount + 1) / $$.player.tileInt;
+                xtemp = $$.player.nx * apart + $$.player.gx;
+                ytemp = $$.player.ny * apart + $$.player.gy;
+                ztemp = $$.player.nz * apart + $$.player.gz;
+
+            // This condition will stop when tileCount stays larger than tileInt
+            // This is reset when key is pressed or held for walking
+            $$.player.tileCount++;
+
+            // Once we have completed an animation cycle, reset if key is down or stop if not walking
+            // Update last player tile to next tile
+            if ($$.player.tileCount == $$.player.tileInt) {
+                if (!APP.keyboard.isPressed()) {
+                    $$.player.walking = false;                        
+                }
+
+                $$.player.tileCount = 0;
+                $$.player.jumping   = 0;
+
+                xtemp = $$.player.gx += $$.player.nx;
+                ytemp = $$.player.gy += $$.player.ny;
+                ztemp = $$.player.gz += $$.player.nz;
+
+                $$.player.nx = $$.player.nx;
+                $$.player.ny = $$.player.ny;
+            }
+        }
+
+        return {
+            // x and y Map related to actual map matrix coordinates
+            // x and y Raw are floats putting a player on or between tiles on a map
+            xMap: $$.player.gx,
+            yMap: $$.player.gy,
+            xRaw: xtemp,
+            yRaw: ytemp,
+            zRaw: ztemp
+        }
+    }
 });
 
 var BOOTSTRAP = (function($$) {    
