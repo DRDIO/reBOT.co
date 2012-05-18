@@ -1,4 +1,6 @@
-define(['tool/settings', 'tool/keyboard'], function(keyboard) {
+define(['tool/settings', 'tool/keyboard'], function() {
+    console.log(APP.keyboard);
+    
     $('#panel>div').buttonset();
 
     for (var i in BOOTSTRAP.initSettings) {
@@ -37,11 +39,12 @@ define(['tool/settings', 'tool/keyboard'], function(keyboard) {
     APP.attachEvents = function() {
         $(window).keydown(function(e) {
             var action = APP.keyboard.press(e.which);
+            
             if (action == 'settings') {
                 BOOTSTRAP.toggleSettings();
             } else if (action == 'move') {
-                var dir = APP.keyboard.mapDirection();
-                BOOTSTRAP.player.move(dir);
+                var dir = APP.keyboard.mapDirection();                
+                APP.player.move(dir);
             }
         });
 
@@ -73,6 +76,6 @@ define(['tool/settings', 'tool/keyboard'], function(keyboard) {
             hash += i + ':' + BOOTSTRAP.settings[i] + ',';
         }
 
-        location.hash = hash + 'gx:' + BOOTSTRAP.player.gx + ',gy:' + BOOTSTRAP.player.gy;
+        location.hash = hash + 'gx:' + APP.player.globalX + ',gy:' + APP.player.globalY;
     }
 });

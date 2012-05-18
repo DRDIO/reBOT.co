@@ -29,16 +29,23 @@ var BOOTSTRAP = (function($$)
     };
 
     if (location.hash) {
-        var pairs = location.hash.substr(1).split(',');
+        var pairs = location.hash.substr(1).split(','), 
+            gx, 
+            gy;
+            
         for (var i in pairs) {
             var keyvalue = pairs[i].split(':');
             if (keyvalue[0] in $$.initSettings) {
                 $$.initSettings[keyvalue[0]].v = parseInt(keyvalue[1]);
             } else if (keyvalue[0] == 'gx') {
-                $$.player.gx = parseInt(keyvalue[1]);
+                gx = parseInt(keyvalue[1]);
             } else if (keyvalue[0] == 'gy') {
-                $$.player.gy = parseInt(keyvalue[1]);
+                gy = parseInt(keyvalue[1]);
             }
+        }
+        
+        if (gx && gy) {
+            APP.player.setPosition(gx, gy);
         }
     }
 

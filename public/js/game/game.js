@@ -50,7 +50,7 @@ var BOOTSTRAP = (function($$) {
     $$.initGame = function()
     {
         APP.world.init();
-        APP.world.seed($$.player.gx, $$.player.gy, $$.settings.rstep);
+        APP.world.seed(APP.player.globalX, APP.player.globalX, $$.settings.rstep);
     }
 
     $$.userApproved = function(user)

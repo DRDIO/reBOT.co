@@ -49,12 +49,12 @@ var BOOTSTRAP = (function($$)
         var time  = new Date().getTime();
 
         // Returns (exact) x, y, z, (map tile) xtile, ytile, and (animation) key
-        var player     = $$.player.getInfo(),
+        var player     = APP.player.getFrameOffsets(),
             radius     = BOOTSTRAP.settings.rstep;
 
         // Loop through every tile in a square radius of player
-        for (var x = player.xMap - radius; x <= player.xMap + radius; x++) {
-            for (var y = player.yMap - radius; y <= player.yMap + radius; y++) {
+        for (var x = player.gx - radius; x <= player.gx + radius; x++) {
+            for (var y = player.gy - radius; y <= player.gy + radius; y++) {
                 // Get the tile for this coordinate, get image path, and z too                
                 
                 var tile      = APP.world.getTile(x, y),
@@ -62,9 +62,9 @@ var BOOTSTRAP = (function($$)
                     zTile     = tile.getZ();
 
                 // Calculate the image rendering coordinates relative to the player
-                var xRel = x - player.xRaw,
-                    yRel = y - player.yRaw,
-                    zRel = zTile - player.zRaw;
+                var xRel = x - player.x,
+                    yRel = y - player.y,
+                    zRel = zTile - player.z;
 
                 $$.renderImage(imagePath, xRel, yRel, zRel);
 
@@ -77,9 +77,9 @@ var BOOTSTRAP = (function($$)
                 if (!$$.settings.drought && tile.isFlooded()) {
                     // Every half a second the animation for water changes
                     var waterVariant = (Math.round(time % 500 / 500) + 1);
-
+                    
                     imagePath = '/img/terrain/' + APP.TILE_TYPE_WATER + 'x' + waterVariant + '.png';
-                    zRel      = tile.getZFlood() - player.zRaw;
+                    zRel      = tile.getZFlood() - player.z;
 
                     $$.renderImage(imagePath, xRel, yRel, zRel);
                 }
@@ -130,9 +130,24 @@ var BOOTSTRAP = (function($$)
             $$.buildCtx.globalAlpha = 0.5;
         }
 
-        var playerSprite = APP.spriteAlbum.get(APP.PLAYER_PATH);
+        var playerSprite = APP.spriteAlbum.get(APP.PLAYER_PATH),
+            step         = 0;
 
-        var frame = 4 * $$.player.dir + ($$.player.jumping || ($$.player.tileCount % 3)),
+        switch (APP.player.state) {
+            case APP.player.STATE_WALKING:
+                step = APP.player.frameCount % APP.player.frameLoop;
+                break;
+            case APP.player.STATE_JUMPING:
+                step = 3;
+                break;
+            case APP.player.STATE_STANDING:
+            default:
+                step = 0;
+                break;
+        }
+        
+        // Frame determines where in sprite to grab based on rotation and action
+        var frame = 4 * APP.player.globalDir + step,
             sx = playerSprite.width * frame,
             sy = 0,
             sw = playerSprite.width,

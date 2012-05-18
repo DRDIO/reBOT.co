@@ -1,4 +1,4 @@
-define(['entity/sprite'], function() {
+define(['./sprite'], function() {
     var SpriteAlbum = function() {
         this.album = {};
     }
@@ -12,6 +12,9 @@ define(['entity/sprite'], function() {
         return this.album[path];
     }
 
+    /**
+     * Create a sprite and add it to the album
+     */     
     SpriteAlbum.prototype.set = function(path, width, height, xOffset, yOffset, promise) {
         this.album[path] = new APP.Sprite(path, width, height, xOffset, yOffset, promise);
     }
