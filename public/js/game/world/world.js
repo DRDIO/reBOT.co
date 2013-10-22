@@ -3,11 +3,10 @@ define([
     '../tool/simplexnoise',
     '../entity/entity',
     '../entity/player'
-    ], function(Tile, SimplexNoise, Entity, Player) 
-{
+], function(Tile, SimplexNoise, Entity, Player) {
     
     var World = $C.extend({
-        
+        config:         null, 
         map:            null,
         zNormalized:    null,
         lowFrequency:   null,
@@ -15,23 +14,27 @@ define([
         highFrequency:  null,
         highAmplitude:  null,
         rstep:          null,
-        tileLevel:      null,
         simplex:        null,
         io:             null,
         player:         null,
+        drought:        null,
         
         init: function(config, io) 
         {
+            console.log(config.rstep);
+
             $L.html('Generating Player World');
-            
+
+            this.config         = config;
+
             this.map            = {};
-            this.zNormalized    = (config.namp1 + config.namp2) / 100;
-            this.lowFrequency   = config.nstep1;
-            this.lowAmplitude   = config.namp1;
-            this.highFrequency  = config.nstep2;
-            this.highAmplitude  = config.namp2;
-            this.rstep          = config.rstep;
-            this.tileLevel      = config.tileLevel;
+            this.zNormalized    = (config.namp1.v + config.namp2.v) / 100;
+            this.lowFrequency   = config.nstep1.v;
+            this.lowAmplitude   = config.namp1.v;
+            this.highFrequency  = config.nstep2.v;
+            this.highAmplitude  = config.namp2.v;
+            this.rstep          = config.rstep.v;
+            this.drought        = config.drought.v;
             
             // Our connection to the server
             this.io         = io;            
@@ -39,11 +42,15 @@ define([
             this.player     = new Player();
             
             // Seed the world for the player
-            this.seed(config.gx, config.gy, config.rstep);
+            this.seed(config.gx, config.gy, config.rstep.v);
+
+            console.log(this.map);
         },
         
         seed: function(xCenter, yCenter, radius) 
         {
+            console.log([xCenter, yCenter, radius]);
+
             for (var x = xCenter - radius; x <= xCenter + radius; x++) {
                 if (!this.map[x]) {
                     this.map[x] = {};
@@ -62,7 +69,7 @@ define([
             if (!(x in this.map) || !(y in this.map[x])) {
                 this.seed(x, y, this.rstep);
             }
-            
+
             return this.map[x][y];
         },
         
@@ -74,12 +81,15 @@ define([
         createTile: function(x, y) 
         {
             var z         = this.createZ(x, y),
-                type      = this.createType(z),
                 variant   = 1,
                 zFlood    = this.createZFlood(z),
-                smooth    = this.smoothTerrain(x, y, z, type, variant, this.rstep),
-                tile      = new Tile(Math.round(smooth.z), smooth.type, smooth.variant, zFlood);
-                
+                tile      = new Tile(null, null, null, null, zFlood),
+                type      = this.createType(tile, z),
+                smooth    = this.smoothTerrain(tile, x, y, z, type, variant, this.rstep);
+
+            tile.setZ(Math.round(smooth.z));
+            tile.setTypeVariant(smooth.type, smooth.variant);
+
             return tile;
         },
         
@@ -92,24 +102,24 @@ define([
             return z;  
         },
         
-        createType: function(z) 
+        createType: function(tile, z) 
         {
             // set the default type to grass and get min/max height of world
-            var type = Tile.TYPE_GRASS;
+            var type = tile.TYPE_GRASS;
     
             // type settings are percentages of max z range of map
-            if (z < this.tileLevel.water        * this.zNormalized) {
-                type = Tile.TYPE_MUD;
-            } else if (z < this.tileLevel.beach * this.zNormalized) {
-                type = Tile.TYPE_SAND;
-            } else if (z < this.tileLevel.plain * this.zNormalized) {
-                type = Tile.TYPE_PLAIN;
-            } else if (z > this.tileLevel.snow  * this.zNormalized) {
-                type = Tile.TYPE_ICE;
-            } else if (z > this.tileLevel.mount * this.zNormalized) {
-                type = Tile.TYPE_STONE;
-            } else if (z > this.tileLevel.hill  * this.zNormalized) {
-                type = Tile.TYPE_HILL;
+            if (z < this.config.lvlwater.v        * this.zNormalized) {
+                type = tile.TYPE_MUD;
+            } else if (z < this.config.lvlbeach.v * this.zNormalized) {
+                type = tile.TYPE_SAND;
+            } else if (z < this.config.lvlplain.v * this.zNormalized) {
+                type = tile.TYPE_PLAIN;
+            } else if (z > this.config.lvlsnow.v  * this.zNormalized) {
+                type = tile.TYPE_ICE;
+            } else if (z > this.config.lvlmount.v * this.zNormalized) {
+                type = tile.TYPE_STONE;
+            } else if (z > this.config.lvlhill.v  * this.zNormalized) {
+                type = tile.TYPE_HILL;
             }
     
             return type;
@@ -118,14 +128,14 @@ define([
         createZFlood: function(z)
         {
             // This tile is flooded if below global water level
-            if (!this.drought && z < this.tileLevel.water * this.zNormalized) {
-                return this.tileLevel.water * this.zNormalized;
+            if (!this.drought && z < this.config.lvlwater.v * this.zNormalized) {
+                return this.config.lvlwater.v * this.zNormalized;
             }
 
             return false;
         },
         
-        smoothTerrain: function(x, y, z, type, variant, radiusMax) {
+        smoothTerrain: function(tile, x, y, z, type, variant, radiusMax) {
             // Quickly check if tile is within square of radius dr
             if (Math.abs(x) <= radiusMax && Math.abs(y) <= radiusMax) {
                 
@@ -134,7 +144,7 @@ define([
     
                 // Add a dash of seeded random magic to make a cobble patch
                 if (radiusMax / 2 * Math.random() + 1 > radius) {
-                    type    = Tile.TYPE_ROAD;
+                    type    = tile.TYPE_ROAD;
                     variant = Math.ceil(Math.random() * 4);
                 }
     

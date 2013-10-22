@@ -21,14 +21,16 @@ define([
         
         init: function(config) 
         {
+            this.config = config;
+
             // Connect with the socket
             this.socket = new Socket();
             
             // Setup DOM and attempt to load settings from URL
-            this.dom      = new Dom();
+            this.dom      = new Dom(config);
             
             this.settings = this.dom.loadHash(config.initSettings);            
-            
+
             // Create a 2d display attached to the #game DOM and name it canvas
             this.display = new Display($(config.domCanvas), 'canvas', config.spritePaths);
             
@@ -38,7 +40,7 @@ define([
             // Get the socket promises as well            
             promises.push(this.socket.connect().getPromise());
             
-            this.world = new World(this.settings, this.socket, this.display);            
+            this.world = new World(this.settings, this.socket);            
             
             this.keyboard = new Keyboard();
                                     

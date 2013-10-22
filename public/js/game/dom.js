@@ -2,8 +2,7 @@ define(function()
 {
     
     var Dom = $C.extend({
-        
-        init: function(settings)
+        init: function()
         {
             $L.html('Initializing DOM');
             
@@ -110,8 +109,8 @@ define(function()
                 for (var i in pairs) {
                     var keyvalue = pairs[i].split(':');
                     
-                    if (keyvalue[0] in $$.initSettings) {
-                        $$.initSettings[keyvalue[0]].v = parseInt(keyvalue[1]);
+                    if (keyvalue[0] in initSettings) {
+                        initSettings[keyvalue[0]].v = parseInt(keyvalue[1]);
                     } else if (keyvalue[0] == 'gx') {
                         gx = parseInt(keyvalue[1]);
                     } else if (keyvalue[0] == 'gy') {

@@ -122,7 +122,8 @@ define(function()
                     z:     this.dZ * percent + this.globalZ,
                     dir:   this.globalDir,
                     state: this.state,
-                    step:  this.frameCount % this.frameLoop
+                    step:  this.frameCount % this.frameLoop,
+                    entity: this
                 };
             } else {            
                 // We have completed a loop, update the global coordinates of entity
@@ -157,7 +158,8 @@ define(function()
                     y:     this.globalY,
                     z:     this.globalZ,
                     dir:   this.globalDir,
-                    state: this.state
+                    state: this.state,
+                    entity: this
                 };
             }
         },
