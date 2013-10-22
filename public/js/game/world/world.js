@@ -14,12 +14,13 @@ define([
         highFrequency:  null,
         highAmplitude:  null,
         rstep:          null,
+        zstep:          null,
         simplex:        null,
         io:             null,
         player:         null,
         drought:        null,
         
-        init: function(config, io) 
+        init: function(config, io, randomSeed) 
         {
             console.log(config.rstep);
 
@@ -34,11 +35,12 @@ define([
             this.highFrequency  = config.nstep2.v;
             this.highAmplitude  = config.namp2.v;
             this.rstep          = config.rstep.v;
+            this.zstep          = config.zstep.v;
             this.drought        = config.drought.v;
             
             // Our connection to the server
             this.io         = io;            
-            this.simplex    = new SimplexNoise();             
+            this.simplex    = new SimplexNoise(undefined, randomSeed);             
             this.player     = new Player();
             
             // Seed the world for the player

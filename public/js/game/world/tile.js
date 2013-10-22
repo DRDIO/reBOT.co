@@ -65,7 +65,7 @@ define(function()
 
         isFlooded: function() 
         {
-            return this.isFlooded != false;
+            return this.zFlood != false;
         },
 
         getZFlood: function() 

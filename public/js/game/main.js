@@ -40,7 +40,7 @@ define([
             // Get the socket promises as well            
             promises.push(this.socket.connect().getPromise());
             
-            this.world = new World(this.settings, this.socket);            
+            this.world = new World(this.settings, this.socket, config.randomSeed);            
             
             this.keyboard = new Keyboard();
                                     

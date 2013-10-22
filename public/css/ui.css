@@ -78,11 +78,7 @@ body {
     -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
 }
 
-    #game canvas {
-        border-radius: 8px;
-        -moz-border-radius: 8px;
-    }
-
+ 
 #copyright {
     padding-top: 8px;
     height: 22px;

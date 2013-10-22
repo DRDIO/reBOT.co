@@ -1,9 +1,12 @@
-define(['./spritealbum'], function(SpriteAlbum) 
-{
+define([
+    './spritealbum'
+], function(SpriteAlbum) {
     var Display = $C.extend({
         spriteAlbum: null,
         paths:       null,
         container:   null,
+        build:       null,
+        bldctx:      null,
         canvas:      null,
         context:     null,
         w:           null,
@@ -25,13 +28,14 @@ define(['./spritealbum'], function(SpriteAlbum)
                 height: 'inherit'
             }));
             
-            this.canvas = this.container.children('#' + label);
+            this.canvas = this.container.children('#' + label)[0];
+            this.context = this.canvas.getContext('2d');
 
-            this.w = this.canvas.width();
-            this.h = this.canvas.height();
+            this.w = this.canvas.width;
+            this.h = this.canvas.height;
             
-            this.xc = this.width  / 2;
-            this.yc = this.height / 2;
+            this.xc = this.w / 2;
+            this.yc = this.h / 2;
             
             // Declare all sprite sets and add them accordingly
             var tiles = [
@@ -54,16 +58,18 @@ define(['./spritealbum'], function(SpriteAlbum)
                 $L.html('Loading ' + tiles[i]);
                 
                 var path = '/img/terrain/' + tiles[i] + '.png';
-                this.spriteAlbum.set(path, 64, 31, 32, 16);
+                this.spriteAlbum.set(path, 64, 206, 32, 16);
             }  
             
             // Create Custom Player
             var playerSprite = this.spriteAlbum.set(paths.player);
     
+    /*
             this.tintCanvas(playerSprite.context, playerSprite.canvas.width, playerSprite.canvas.height,
                 Math.round(Math.random() * 128),
                 Math.round(Math.random() * 128),
                 Math.round(Math.random() * 128));
+*/
         },
         
         getPromises: function()
@@ -111,7 +117,7 @@ define(['./spritealbum'], function(SpriteAlbum)
                         yRel = y - playerOS.y,
                         zRel = zTile - playerOS.z;
     
-                    this.renderImage(imagePath, xRel, yRel, zRel);
+                    this.renderImage(imagePath, xRel, yRel, zRel, world.zstep);
     
                     // If we are at the center of the screen, render the player
                     if (Math.floor(xRel) === 0 && Math.floor(yRel) === 0) {
@@ -120,6 +126,7 @@ define(['./spritealbum'], function(SpriteAlbum)
     
                     // Overlay a tile of water if tile is flooded
                     if (!world.drought && tile.isFlooded()) {
+                        console.log('flooded');
                         // Every half a second the animation for water changes
                         var waterVariant = (Math.round(time % 500 / 500) + 1);
 
@@ -127,18 +134,20 @@ define(['./spritealbum'], function(SpriteAlbum)
                         zRel      = tile.getZFlood() - playerOS.z;
 
                         this.renderImage(imagePath, xRel, yRel, zRel, world.zstep);
+                    } else {
+                        console.log('dry');
                     }
                 }
             }
     
             // Overlay a translucent player to deal with obfuscation
-            this.renderPlayer(true, playerOS);
+            this.renderPlayer(this.paths.player, playerOS);
     
             // Time of Day
             // $$.timeOfDay();
     
             // Put the build canvas onto the display canvas
-            this.canvas.drawImage(this.build, 0, 0, this.w, this.h, 0, 0, this.w, this.h);
+            // this.context.drawImage(this.build, 0, 0, this.w * 2, this.h * 2, 0, 0, this.w, this.h);
         },
         
         renderImage: function(imagePath, xRel, yRel, zRel, zStep) 
@@ -151,8 +160,9 @@ define(['./spritealbum'], function(SpriteAlbum)
             if (image) {
                 var xCanvas = this.xc + (xRel * image.xOffset) - (yRel * image.xOffset) - image.xOffset,
                     yCanvas = this.yc + (xRel * image.yOffset) + (yRel * image.yOffset) - image.yOffset - (zRel * zStep);
-    
-                this.canvas.drawImage(image.canvas, xCanvas, yCanvas);
+
+                this.context.drawImage(image.canvas, xCanvas, yCanvas);
+
             } else {
                 console.log(imagePath + ' does not exist');
             }    
@@ -189,89 +199,9 @@ define(['./spritealbum'], function(SpriteAlbum)
                 dx = this.xc - playerSprite.xOffset,
                 dy = this.yc - playerSprite.yOffset;
     
-            this.canvas.drawImage(playerSprite.canvas, sx, sy, sw, sh, dx, dy, sw, sh);
-            this.canvas.globalAlpha = 1;
+            this.context.drawImage(playerSprite.canvas, sx, sy, sw, sh, dx, dy, sw, sh);
         }
     });
     
     return Display;
 });
- 
- /*
-var BOOTSTRAP = (function($$) 
-{
-    
-
-
-    $$.renderImage = function(imagePath, xRel, yRel, zRel) {
-        // xc and yc represent the center of the render canvas, ztep locks tiles by height increments of 8
-        // x and y offset represent the difference from top left to visual center of image object
-        // Below is a standard translation from 3d isometric to 2d canvas
-        var image = APP.spriteAlbum.get(imagePath);
-
-        if (image) {
-            var xCanvas = $$.xc + (xRel * image.xOffset) - (yRel * image.xOffset) - image.xOffset,
-                yCanvas = $$.yc + (xRel * image.yOffset) + (yRel * image.yOffset) - image.yOffset - (zRel * BOOTSTRAP.settings.zstep);
-
-            $$.buildCtx.drawImage(image.canvas, xCanvas, yCanvas);
-        } else {
-            console.log(imagePath + ' does not exist');
-        }
-
-    }
-    
-    $$.renderTile = function(tile, x, y, z)
-    {
-        // Translate 3D coordinates to 2D Isometric
-        var xpos = $$.xc + x * tile.xoff - y * tile.xoff - tile.xoff;
-        var ypos = $$.yc + x * tile.yoff + y * tile.yoff - tile.yoff - z * $$.settings.zstep;
-
-        $$.buildCtx.drawImage(tile.cvs, xpos, ypos);
-    }
-
-    $$.renderPlayer = function(isGhost)
-    {
-        if (isGhost) {
-            $$.buildCtx.globalAlpha = 0.5;
-        }
-
-        var playerSprite = APP.spriteAlbum.get(APP.PLAYER_PATH),
-            step         = 0;
-
-        switch (APP.player.state) {
-            case APP.player.STATE_WALKING:
-                step = APP.player.frameCount % APP.player.frameLoop;
-                break;
-            case APP.player.STATE_JUMPING:
-                step = 3;
-                break;
-            case APP.player.STATE_STANDING:
-            default:
-                step = 0;
-                break;
-        }
-        
-        // Frame determines where in sprite to grab based on rotation and action
-        var frame = 4 * APP.player.globalDir + step,
-            sx = playerSprite.width * frame,
-            sy = 0,
-            sw = playerSprite.width,
-            sh = playerSprite.height,
-            dx = $$.xc - playerSprite.xOffset,
-            dy = $$.yc - playerSprite.yOffset;
-
-        $$.buildCtx.drawImage(playerSprite.canvas, sx, sy, sw, sh, dx, dy, sw, sh);
-        $$.buildCtx.globalAlpha = 1;
-    }
-
-    $$.timeOfDay = function()
-    {
-        time = Math.abs(time % 30000 - 15000) / 60000;
-        $$.buildCtx.fillStyle = 'rgba(10, 50, 80, ' + time + ')';
-        $$.buildCtx.fillRect(0, 0, $$.w, $$.h);
-    }
-
-    return $$;
-}(BOOTSTRAP || {}));
-
-*/
