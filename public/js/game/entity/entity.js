@@ -54,17 +54,10 @@ define(function()
             this.globalDir = dir || 0;
         },
         
-        move: function(dir, getZFunc)
+        changeDirection: function(dir)
         {
             this.queuedDir = dir - this.globalDir;
-        
-            // If they are standing, let them turn and look around
-            // (Note, if walking, it will turn and move)
-            if (this.state == this.STATE_STANDING && this.globalDir != dir) {
-                console.log('turning');
-                return;
-            }
-            
+
             switch (dir) {
                 case 0:
                     this.queuedDX = -1;
@@ -78,12 +71,28 @@ define(function()
                 case 3:
                     this.queuedDY = 1;
                     break;
-                default:
-                    return;
             }
-    
-            // Determine where next Z will be from the world
-            this.queuedDZ = getZFunc(this.globalX + this.queuedDX, this.globalY + this.queuedDY) - this.globalZ;
+        },
+
+        getDetails: function()
+        {
+            return {
+                'x': this.globalX + this.queuedDX,
+                'y': this.globalY + this.queuedDY,
+                'z': this.globalZ
+            }
+        },
+
+        changeState: function(qz)
+        {
+            this.queuedDZ = qz;
+
+            // If they are standing, let them turn and look around
+            // (Note, if walking, it will turn and move)
+            if (this.state == this.STATE_STANDING && this.queuedDir != 0) {
+                console.log('turning');
+                return;
+            }
     
             if (this.queuedDZ > this.jumpMax || this.queuedDZ < this.fallMax) {
                 console.log('not safe');

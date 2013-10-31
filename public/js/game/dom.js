@@ -65,7 +65,7 @@ define(function()
                     dom.toggleSettings();
                 } else if (action == 'move') {
                     var dir = game.keyboard.mapDirection();                
-                    game.world.player.move(dir);
+                    game.world.movePlayer(dir);
                 }
             });
     

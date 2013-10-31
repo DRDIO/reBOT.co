@@ -171,6 +171,17 @@ define([
                 type:    type,
                 variant: variant
             }
+        },
+
+        movePlayer: function(dir)
+        {
+            this.player.changeDirection(dir);
+
+            var details = this.player.getDetails();
+            var nextZ   = this.getZ(details.x, details.y) - details.z;
+
+            this.player.changeState(nextZ);
+
         }
     });
     

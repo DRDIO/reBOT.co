@@ -199,7 +199,7 @@ define([
 
             switch (playerOS.state) {
                 case playerOS.entity.STATE_WALKING:
-                    step = playerOS.frameCount % playerOS.frameLoop;
+                    step = playerOS.entity.frameCount % playerOS.entity.frameLoop;
                     break;
                 case playerOS.entity.STATE_JUMPING:
                     step = 3;

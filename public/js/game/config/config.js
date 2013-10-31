@@ -8,9 +8,9 @@ define({
         'drought': {l: 'Drought',        v: 0, i: 0, a: 1, s: 1},
 
         // Core Sliders and Steps
-        'fps':   {l: 'FPS',           v: 5, i: 5, a: 120, s: 5},
+        'fps':   {l: 'FPS',           v: 30, i: 5, a: 120, s: 5},
         'zstep': {l: 'Step Height',   v: 12,  i: 0, a: 32,  s: 1, r: true},
-        'rstep': {l: 'Render Radius', v: 12, i: 1, a: 32,  s: 1, r: true},
+        'rstep': {l: 'Render Radius', v: 18, i: 1, a: 32,  s: 1, r: true},
 
         // Noise Terrain Generation
         'nstep1': {l: 'Frequency 1', v: 256, i: 0, a: 512, s: 32, r: true},
