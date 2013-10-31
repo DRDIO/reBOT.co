@@ -23,16 +23,23 @@ define([
             this.paths       = paths;
             
             this.container.append($('<canvas/>', {
-                id:     label,
-                width:  'inherit',
-                height: 'inherit'
+                id:     label
             }));
             
             this.canvas = this.container.children('#' + label)[0];
-            this.context = this.canvas.getContext('2d');
+
+
+            this.canvas.width = 640;
+            this.canvas.height = 400;
 
             this.w = this.canvas.width;
             this.h = this.canvas.height;
+
+            this.canvas.style.width = 640 + 'px';
+            this.canvas.style.height = 400 + 'px';
+
+            this.context = this.canvas.getContext('2d');
+
             
             this.xc = this.w / 2;
             this.yc = this.h / 2;
@@ -46,12 +53,15 @@ define([
                 '5x1',
                 '6x1',
                 '7x1',
-                '8x1',
-                '8x2',
                 '9x1',
                 '9x2',
                 '9x3',
                 '9x4'
+            ];
+
+            var water = [
+                '8x1',
+                '8x2'
             ];
             
             for (var i in tiles) {
@@ -59,10 +69,18 @@ define([
                 
                 var path = '/img/terrain/' + tiles[i] + '.png';
                 this.spriteAlbum.set(path, 64, 206, 32, 16);
-            }  
+            }
+
+            for (var i in water) {
+                $L.html('Loading ' + water[i]);
+                
+                var path = '/img/terrain/' + water[i] + '.png';
+                this.spriteAlbum.set(path, 64, 31, 32, 16);
+            }
             
             // Create Custom Player
-            var playerSprite = this.spriteAlbum.set(paths.player);
+            $L.html('Loading Player');
+            var playerSprite = this.spriteAlbum.set(paths.player, 32, 48, 16, 16);
     
     /*
             this.tintCanvas(playerSprite.context, playerSprite.canvas.width, playerSprite.canvas.height,
@@ -101,7 +119,7 @@ define([
             var playerOS   = player.getFrameOffset(),
                 radius     = rstep;
     
-            console.log('rendering a frame');
+            // console.log('rendering a frame');
 
             // Loop through every tile in a square radius of player
             for (var x = playerOS.gx - radius; x <= playerOS.gx + radius; x++) {
@@ -126,7 +144,7 @@ define([
     
                     // Overlay a tile of water if tile is flooded
                     if (!world.drought && tile.isFlooded()) {
-                        console.log('flooded');
+                        // console.log('flooded');
                         // Every half a second the animation for water changes
                         var waterVariant = (Math.round(time % 500 / 500) + 1);
 
@@ -135,7 +153,7 @@ define([
 
                         this.renderImage(imagePath, xRel, yRel, zRel, world.zstep);
                     } else {
-                        console.log('dry');
+                        // console.log('dry');
                     }
                 }
             }
@@ -161,6 +179,8 @@ define([
                 var xCanvas = this.xc + (xRel * image.xOffset) - (yRel * image.xOffset) - image.xOffset,
                     yCanvas = this.yc + (xRel * image.yOffset) + (yRel * image.yOffset) - image.yOffset - (zRel * zStep);
 
+                // this.drawImage({'canvas': this.canvas, 'image': image.canvas, 'desw': this.w, 'desh': this.h, 'desx': xCanvas, 'desy': yCanvas});
+            
                 this.context.drawImage(image.canvas, xCanvas, yCanvas);
 
             } else {

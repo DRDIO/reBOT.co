@@ -27,9 +27,11 @@ define([
             this.socket = new Socket();
             
             // Setup DOM and attempt to load settings from URL
-            this.dom      = new Dom(config);
+            this.dom      = new Dom();
             
-            this.settings = this.dom.loadHash(config.initSettings);            
+            // Generates settings from hash + mixer configs
+            this.settings = this.dom.loadHash(config.settingsMixer);            
+            this.settings.seed = config.randomSeed;
 
             // Create a 2d display attached to the #game DOM and name it canvas
             this.display = new Display($(config.domCanvas), 'canvas', config.spritePaths);
@@ -40,8 +42,10 @@ define([
             // Get the socket promises as well            
             promises.push(this.socket.connect().getPromise());
             
-            this.world = new World(this.settings, this.socket, config.randomSeed);            
+            // Create World with player
+            this.world = new World(this.settings, this.socket, this.settings.seed);            
             
+            // Gather keyboard (bind to DOM)
             this.keyboard = new Keyboard();
                                     
             // Then render and start game
@@ -52,12 +56,18 @@ define([
                 
                 // When everything is setup, allow mouse and keyboard movements
                 game.dom
-                    .attachToolbar(game)
+                    .attachToolbar(game, config.settingsMixer)
                     .attachEvents(game)
                     .start();
-                    
                 
             });  
+        },
+
+        restart: function()
+        {
+            this.world.build(this.settings, this.settings.seed);
+            //this.world.generateSimplex(this.settings.seed)
+            //this.renderFrame();
         },
         
         renderFrame: function()
@@ -68,7 +78,7 @@ define([
             var game = this;
             setTimeout(function() {
                 game.renderFrame();
-            }, 1000 / game.settings.fps);
+            }, 1000 / this.settings.fps);
         }
     });
         

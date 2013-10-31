@@ -9,11 +9,11 @@ define(function()
             $('#panel>div').buttonset();
         },
         
-        attachToolbar: function(game) 
+        attachToolbar: function(game, settingsMixer) 
         {  
             $L.html('Attaching Toolbar');
             
-            for (var i in game.settings) {
+            for (var i in settingsMixer) {
                 (function(key, properties) {
                     $('<div/>')
                         .insertAfter('#panel>h2')
@@ -29,12 +29,15 @@ define(function()
         
                                 $(ui.handle).html(properties.v);
                             })
+
+                            // Bind a settings update on change
                             .bind('slide slidechange', function(e, ui) {
                                 var value = $(this).slider('option', 'value');
                                 var key   = $(this).attr('id').substr(8);
         
                                 $(ui.handle).html(value);
                                 game.settings[key] = parseInt(value, 0);
+                                game.restart();
         
                             }).bind('slide', function(e, ui) {
                                 if (properties.r) {
@@ -43,7 +46,7 @@ define(function()
                             })
                             .slider()
                         );
-                })(i, game.settings[i]);
+                })(i, settingsMixer[i]);
             }
             
             return this;
@@ -62,7 +65,7 @@ define(function()
                     dom.toggleSettings();
                 } else if (action == 'move') {
                     var dir = game.keyboard.mapDirection();                
-                    game.world.playerMove(dir);
+                    game.world.player.move(dir);
                 }
             });
     
@@ -78,7 +81,7 @@ define(function()
     
             $('#setting-refresh').click(function() {
                 // Force a new seed and reboot game
-                Math.random();
+                game.settings.seed = Math.random();
                 game.restart();
             });
     
@@ -99,32 +102,43 @@ define(function()
             return this;
         },
         
-        loadHash: function(initSettings)
+        loadHash: function(settingsMixer)
         {
+            var gx    = 0, 
+                gy    = 0;
+
             if (location.hash) {
-                var pairs = location.hash.substr(1).split(','), 
-                    gx    = 0, 
-                    gy    = 0;
+                var pairs = location.hash.substr(1).split(',');
                     
                 for (var i in pairs) {
                     var keyvalue = pairs[i].split(':');
                     
-                    if (keyvalue[0] in initSettings) {
-                        initSettings[keyvalue[0]].v = parseInt(keyvalue[1]);
+                    if (keyvalue[0] in settingsMixer) {
+                        settingsMixer[keyvalue[0]].v = parseInt(keyvalue[1]);
                     } else if (keyvalue[0] == 'gx') {
                         gx = parseInt(keyvalue[1]);
                     } else if (keyvalue[0] == 'gy') {
                         gy = parseInt(keyvalue[1]);
                     }
                 }
-                
-                if (gx && gy) {
-                    initSettings.gx = gx;
-                    initSettings.gy = gy;
-                }
             }
             
-            return initSettings;
+            var settings = this.parseMixer(settingsMixer);
+
+            settings.gx = gx;
+            settings.gy = gy;
+
+            return settings;
+        },
+
+        parseMixer: function(settingsMixer)
+        {
+            var settings = {};
+            for (var i in settingsMixer) {
+                settings[i] = settingsMixer[i].v;
+            }
+
+            return settings;
         },
     
         updateHash: function(settings, playerX, playerY) 
