@@ -51,47 +51,7 @@ define(function()
             
             return this;
         },
-        
-        attachEvents: function(game)
-        {     
-            $L.html('Attaching User Events');
-            
-            var dom = this;
-            
-            $(window).keydown(function(e) {
-                var action = game.keyboard.press(e.which);
-                
-                if (action == 'settings') {
-                    dom.toggleSettings();
-                } else if (action == 'move') {
-                    var dir = game.keyboard.mapDirection();                
-                    game.world.movePlayer(dir);
-                }
-            });
-    
-            $(window).keyup(function(e) {
-                game.keyboard.release(e.which);
-            });
-    
-            $('#panel').hover(function() {
-                $(this).fadeTo(250, 1);
-            }, function() {
-                $(this).fadeTo(250, 0.25);
-            });
-    
-            $('#setting-refresh').click(function() {
-                // Force a new seed and reboot game
-                game.settings.seed = Math.random();
-                game.restart();
-            });
-    
-            $('#setting-hash').click(function() {
-                dom.updateHash();
-            });  
-            
-            return this;
-        },
-        
+
         start: function()
         {
             $L.html('Starting Game');
@@ -101,59 +61,7 @@ define(function()
             
             return this;
         },
-        
-        loadHash: function(settingsMixer)
-        {
-            var gx    = 0, 
-                gy    = 0;
 
-            if (location.hash) {
-                var pairs = location.hash.substr(1).split(',');
-                    
-                for (var i in pairs) {
-                    var keyvalue = pairs[i].split(':');
-                    
-                    if (keyvalue[0] in settingsMixer) {
-                        settingsMixer[keyvalue[0]].v = parseInt(keyvalue[1]);
-                    } else if (keyvalue[0] == 'gx') {
-                        gx = parseInt(keyvalue[1]);
-                    } else if (keyvalue[0] == 'gy') {
-                        gy = parseInt(keyvalue[1]);
-                    }
-                }
-            }
-            
-            var settings = this.parseMixer(settingsMixer);
-
-            settings.gx = gx;
-            settings.gy = gy;
-
-            return settings;
-        },
-
-        parseMixer: function(settingsMixer)
-        {
-            var settings = {};
-            for (var i in settingsMixer) {
-                settings[i] = settingsMixer[i].v;
-            }
-
-            return settings;
-        },
-    
-        updateHash: function(settings, playerX, playerY) 
-        {
-            // Update URL with developer settings
-            var hash = '';
-            for (var i in settings) {
-                hash += i + ':' + settings[i] + ',';
-            }
-    
-            location.hash = hash + 'gx:' + playerX + ',gy:' + playerY;
-            
-            return this;
-        },
-        
         toggleSettings: function()
         {
             if ($('#panel').is(':hidden')) {

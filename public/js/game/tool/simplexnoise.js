@@ -4,8 +4,11 @@
 // Sean McCullough banksean@gmail.com
 
 define(['./seedrandom'], function() 
-{    
-    var SimplexNoise = $C.extend({
+{
+    /**
+     * @class Simplexnoise
+     */
+    return $C.extend({
         
         init: function(r, seed)
         {
@@ -99,10 +102,7 @@ define(['./seedrandom'], function()
             // Add contributions from each corner to get the final noise value.
             // The result is scaled to return values in the interval [-1,1].
             return 70.0 * (n0 + n1 + n2);
-        },
+        }
     });
-
-    
-    return SimplexNoise;
     
 });

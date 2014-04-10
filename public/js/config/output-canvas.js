@@ -1,7 +1,11 @@
 define({
-    randomSeed: 'pasdfadsffa',
-    
-    settingsMixer: {
+    spritePaths: {
+        player: '/img/npc/player.png'
+    },
+
+    domCanvas: '#game',
+
+    mixer: {
         // On/Off Settings
         'jetpack': {l: 'Player Jetpack', v: 1, i: 0, a: 1, s: 1},
         'random':  {l: 'Random Tiles',   v: 1, i: 0, a: 1, s: 1},
@@ -9,7 +13,7 @@ define({
 
         // Core Sliders and Steps
         'fps':   {l: 'FPS',           v: 30, i: 5, a: 120, s: 5},
-        'zstep': {l: 'Step Height',   v: 12,  i: 0, a: 32,  s: 1, r: true},
+        'zstep': {l: 'Step Height',   v: 12, i: 0, a: 32,  s: 1, r: true},
         'rstep': {l: 'Render Radius', v: 18, i: 1, a: 32,  s: 1, r: true},
 
         // Noise Terrain Generation
@@ -25,11 +29,5 @@ define({
         'lvlhill':  {l: 'Hill Level',  v: 20,   i: -100, a: 100, s: 1},
         'lvlmount': {l: 'Mount Level', v: 60,   i: -100, a: 100, s: 1},
         'lvlsnow':  {l: 'Snow Level',  v: 90,   i: -100, a: 100, s: 1}
-    },
-    
-    spritePaths: {
-        player: '/img/npc/player.png'
-    },
-    
-    domCanvas: '#game'
+    }
 });

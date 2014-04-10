@@ -80,7 +80,7 @@ define([
             
             // Create Custom Player
             $L.html('Loading Player');
-            var playerSprite = this.spriteAlbum.set(paths.player, 32, 48, 16, 16);
+            var playerSprite = this.spriteAlbum.set(paths.player, 32, 48, 16, 48);
     
     /*
             this.tintCanvas(playerSprite.context, playerSprite.canvas.width, playerSprite.canvas.height,
@@ -123,7 +123,11 @@ define([
 
             // Loop through every tile in a square radius of player
             for (var x = playerOS.gx - radius; x <= playerOS.gx + radius; x++) {
-                for (var y = playerOS.gy - radius; y <= playerOS.gy + radius; y++) {
+                for (var y = playerOS.gy - radius; y <= playerOS.gx + radius; y++) {
+                    if (x + y >= radius) {
+                        return;
+                    }
+
                     // Get the tile for this coordinate, get image path, and z too                
                     
                     var tile      = world.getTile(x, y),
@@ -160,6 +164,47 @@ define([
     
             // Overlay a translucent player to deal with obfuscation
             this.renderPlayer(this.paths.player, playerOS);
+
+            // Loop through every tile in a square radius of player
+            for (var x = playerOS.gx - radius; x <= playerOS.gx + radius; x++) {
+                for (var y = playerOS.gy - radius; y <= playerOS.gy + radius; y++) {
+                    if (x + y <= radius) {
+                        return;
+                    }
+
+                    // Get the tile for this coordinate, get image path, and z too                
+                    
+                    var tile      = world.getTile(x, y),
+                        imagePath = '/img/terrain/' + tile.getType() + 'x' + tile.getVariant() + '.png',
+                        zTile     = tile.getZ();
+
+                    // Calculate the image rendering coordinates relative to the player
+                    var xRel = x - playerOS.x,
+                        yRel = y - playerOS.y,
+                        zRel = zTile - playerOS.z;
+    
+                    this.renderImage(imagePath, xRel, yRel, zRel, world.zstep);
+    
+                    // If we are at the center of the screen, render the player
+                    if (Math.floor(xRel) === 0 && Math.floor(yRel) === 0) {
+                        this.renderPlayer(this.paths.player, playerOS);
+                    }
+    
+                    // Overlay a tile of water if tile is flooded
+                    if (!world.drought && tile.isFlooded()) {
+                        // console.log('flooded');
+                        // Every half a second the animation for water changes
+                        var waterVariant = (Math.round(time % 500 / 500) + 1);
+
+                        imagePath = '/img/terrain/' + tile.TYPE_WATER + 'x' + waterVariant + '.png';
+                        zRel      = tile.getZFlood() - playerOS.z;
+
+                        this.renderImage(imagePath, xRel, yRel, zRel, world.zstep);
+                    } else {
+                        // console.log('dry');
+                    }
+                }
+            }
     
             // Time of Day
             // $$.timeOfDay();
@@ -190,12 +235,13 @@ define([
     
         renderPlayer: function(imagePath, playerOS, isGhost)
         {
-            if (isGhost) {
-                this.buildCtx.globalAlpha = 0.5;
-            }
-    
             var playerSprite = this.spriteAlbum.get(imagePath),
                 step         = 0;
+
+
+            if (isGhost) {
+                playerSprite.context.globalAlpha = 0.5;
+            }
 
             switch (playerOS.state) {
                 case playerOS.entity.STATE_WALKING:

@@ -1,10 +1,10 @@
-define(['./entity'], function(Entity) 
-{
-    
-    var Player = Entity.extend({
+define([
+    './entity'
+], function (Entity) {
+    /**
+     * @class Player
+     */
+    return Entity.extend({
 
     });
-    
-    return Player;
-    
 });

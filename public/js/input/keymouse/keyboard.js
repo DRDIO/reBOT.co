@@ -1,6 +1,9 @@
 define(function() 
-{    
-    var Keyboard = $C.extend({
+{
+    /**
+     * @class Keyboard
+     */
+    return $C.extend({
         
         init: function() 
         {
@@ -27,7 +30,7 @@ define(function()
     
             return 'unknown';
         },
-        
+
         mapDirection: function() 
         {
             var direction = null;
@@ -65,6 +68,4 @@ define(function()
             return this.keyPressed;
         }
     });
-    
-    return Keyboard;
 });
