@@ -16,7 +16,7 @@ define([
             return this;
         },
 
-        bindGame: function(game)
+        attachMove: function(fn)
         {
             var input = this;
 
@@ -25,7 +25,7 @@ define([
 
                 if (action == 'move') {
                     var dir = input.keyboard.mapDirection();
-                    game.world.movePlayer(dir);
+                    fn(dir);
                 }
             });
 
@@ -33,19 +33,14 @@ define([
                 input.keyboard.release(e.which);
             });
 
-            $('#panel').hover(function() {
-                $(this).fadeTo(250, 1);
-            }, function() {
-                $(this).fadeTo(250, 0.25);
-            });
-
-            $('#setting-refresh').click(function() {
-                // Force a new seed and reboot game
-                game.settings.seed = Math.random();
-                game.restart();
-            });
-
             return this;
+        },
+
+        attachReset: function(fn)
+        {
+            $('#setting-refresh').click(function() {
+                fn();
+            });
         }
     });
 });

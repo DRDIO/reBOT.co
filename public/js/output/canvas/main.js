@@ -1,6 +1,6 @@
 define([
     './display',
-    './dom',
+    './dom'
 ], function(Display, Dom) {
 
     /**

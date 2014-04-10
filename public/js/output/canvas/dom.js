@@ -1,12 +1,21 @@
 define(function() 
 {
-    
-    var Dom = $C.extend({
+    /**
+     * @class Dom
+     */
+    return $C.extend({
         init: function()
         {
             $L.html('Initializing DOM');
             
             $('#panel>div').buttonset();
+
+
+            $('#panel').hover(function() {
+                $(this).fadeTo(250, 1);
+            }, function() {
+                $(this).fadeTo(250, 0.25);
+            });
         },
         
         attachToolbar: function(game, settingsMixer) 
@@ -74,9 +83,5 @@ define(function()
             
             return this;
         }
-        
     });
-    
-    return Dom;
-    
 });
