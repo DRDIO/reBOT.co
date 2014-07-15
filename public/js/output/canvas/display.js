@@ -80,14 +80,7 @@ define([
             
             // Create Custom Player
             $L.html('Loading Player');
-            var playerSprite = this.spriteAlbum.set(paths.player, 32, 48, 16, 48);
-    
-    /*
-            this.tintCanvas(playerSprite.context, playerSprite.canvas.width, playerSprite.canvas.height,
-                Math.round(Math.random() * 128),
-                Math.round(Math.random() * 128),
-                Math.round(Math.random() * 128));
-*/
+            var playerSprite = this.spriteAlbum.set(paths.player, 32, 48, 16, 40);
         },
         
         getPromises: function()
@@ -106,142 +99,100 @@ define([
 
             ctx.putImageData(imgData, 0, 0);
         },
-        
+
+        /**
+         * Render a complete frame
+         *
+         * @param world
+         * @param player
+         * @param rstep
+         */
         render: function(world, player, rstep)
         {
-            // $('#game').clearRect(0, 0, $$.build.width, $$.build.height);
-            // $$.buildCtx.clearRect(0, 0, $$.build.width, $$.build.height);
-    
-            // Get the times stamp and set the temporary position to the last player tile
+            // Every half a second the animation for water changes
             var time  = new Date().getTime();
+            var cycle = (Math.round(time % 333 / 333) + 1);
     
             // Returns (exact) x, y, z, (map tile) xtile, ytile, and (animation) key
-            var playerOS   = player.getFrameOffset(),
-                radius     = rstep;
-    
-            // console.log('rendering a frame');
+            var playerOS   = player.getFrameOffset(), x, y;
 
-            // Loop through every tile in a square radius of player
-            for (var x = playerOS.gx - radius; x <= playerOS.gx + radius; x++) {
-                for (var y = playerOS.gy - radius; y <= playerOS.gx + radius; y++) {
-                    if (x + y >= radius) {
-                        return;
-                    }
-
-                    // Get the tile for this coordinate, get image path, and z too                
-                    
-                    var tile      = world.getTile(x, y),
-                        imagePath = '/img/terrain/' + tile.getType() + 'x' + tile.getVariant() + '.png',
-                        zTile     = tile.getZ();
-
-                    // Calculate the image rendering coordinates relative to the player
-                    var xRel = x - playerOS.x,
-                        yRel = y - playerOS.y,
-                        zRel = zTile - playerOS.z;
-    
-                    this.renderImage(imagePath, xRel, yRel, zRel, world.zstep);
-    
-                    // If we are at the center of the screen, render the player
-                    if (Math.floor(xRel) === 0 && Math.floor(yRel) === 0) {
-                        this.renderPlayer(this.paths.player, playerOS);
-                    }
-    
-                    // Overlay a tile of water if tile is flooded
-                    if (!world.drought && tile.isFlooded()) {
-                        // console.log('flooded');
-                        // Every half a second the animation for water changes
-                        var waterVariant = (Math.round(time % 500 / 500) + 1);
-
-                        imagePath = '/img/terrain/' + tile.TYPE_WATER + 'x' + waterVariant + '.png';
-                        zRel      = tile.getZFlood() - playerOS.z;
-
-                        this.renderImage(imagePath, xRel, yRel, zRel, world.zstep);
-                    } else {
-                        // console.log('dry');
-                    }
+            for (x = playerOS.gx - rstep; x <= playerOS.gx + rstep; x++) {
+                for (y = playerOS.gy - rstep; y <= playerOS.gy + rstep; y++) {
+                    this.renderTile(world, playerOS, cycle, x, y);
                 }
             }
-    
-            // Overlay a translucent player to deal with obfuscation
-            this.renderPlayer(this.paths.player, playerOS);
-
-            // Loop through every tile in a square radius of player
-            for (var x = playerOS.gx - radius; x <= playerOS.gx + radius; x++) {
-                for (var y = playerOS.gy - radius; y <= playerOS.gy + radius; y++) {
-                    if (x + y <= radius) {
-                        return;
-                    }
-
-                    // Get the tile for this coordinate, get image path, and z too                
-                    
-                    var tile      = world.getTile(x, y),
-                        imagePath = '/img/terrain/' + tile.getType() + 'x' + tile.getVariant() + '.png',
-                        zTile     = tile.getZ();
-
-                    // Calculate the image rendering coordinates relative to the player
-                    var xRel = x - playerOS.x,
-                        yRel = y - playerOS.y,
-                        zRel = zTile - playerOS.z;
-    
-                    this.renderImage(imagePath, xRel, yRel, zRel, world.zstep);
-    
-                    // If we are at the center of the screen, render the player
-                    if (Math.floor(xRel) === 0 && Math.floor(yRel) === 0) {
-                        this.renderPlayer(this.paths.player, playerOS);
-                    }
-    
-                    // Overlay a tile of water if tile is flooded
-                    if (!world.drought && tile.isFlooded()) {
-                        // console.log('flooded');
-                        // Every half a second the animation for water changes
-                        var waterVariant = (Math.round(time % 500 / 500) + 1);
-
-                        imagePath = '/img/terrain/' + tile.TYPE_WATER + 'x' + waterVariant + '.png';
-                        zRel      = tile.getZFlood() - playerOS.z;
-
-                        this.renderImage(imagePath, xRel, yRel, zRel, world.zstep);
-                    } else {
-                        // console.log('dry');
-                    }
-                }
-            }
-    
-            // Time of Day
-            // $$.timeOfDay();
-    
-            // Put the build canvas onto the display canvas
-            // this.context.drawImage(this.build, 0, 0, this.w * 2, this.h * 2, 0, 0, this.w, this.h);
         },
-        
+
+        /**
+         * Render a single world tile
+         *
+         * @param world
+         * @param playerOS
+         * @param cycle
+         * @param x
+         * @param y
+         */
+        renderTile: function(world, playerOS, cycle, x, y)
+        {
+            // Get the tile for this coordinate, get image path, and z too
+
+            var tile      = world.getTile(x, y);
+            var imagePath = '/img/terrain/' + tile.getType() + 'x' + tile.getVariant() + '.png';
+            var zTile     = tile.getZ();
+
+            // Calculate the image rendering coordinates relative to the player
+            var xRel = x - playerOS.x;
+            var yRel = y - playerOS.y;
+            var zRel = zTile - playerOS.z;
+
+            this.renderImage(imagePath, xRel, yRel, zRel, world.zstep);
+
+            // Render the player if we are around the center tile (note the rounding due to player sub steps)
+            if (Math.round(xRel) == 0 && Math.round(yRel) == 0) {
+                this.renderPlayer(this.paths.player, playerOS);
+            }
+
+            // Overlay a tile of water if tile is flooded
+            if (!world.drought && tile.isFlooded()) {
+
+                imagePath = '/img/terrain/' + tile.TYPE_WATER + 'x' + cycle + '.png';
+                zRel      = tile.getZFlood() - playerOS.z;
+
+                this.renderImage(imagePath, xRel, yRel, zRel, world.zstep);
+            }
+        },
+
+        /**
+         * Calculate offsets to draw a tile relative to world offsets
+         *
+         * @param imagePath
+         * @param xRel
+         * @param yRel
+         * @param zRel
+         * @param zStep
+         */
         renderImage: function(imagePath, xRel, yRel, zRel, zStep) 
         {
-            // xc and yc represent the center of the render canvas, ztep locks tiles by height increments of 8
+            // xc and yc represent the center of the render canvas, zStep locks tiles by height increments of 8
             // x and y offset represent the difference from top left to visual center of image object
             // Below is a standard translation from 3d isometric to 2d canvas
             var image = this.spriteAlbum.get(imagePath);
-    
-            if (image) {
-                var xCanvas = this.xc + (xRel * image.xOffset) - (yRel * image.xOffset) - image.xOffset,
-                    yCanvas = this.yc + (xRel * image.yOffset) + (yRel * image.yOffset) - image.yOffset - (zRel * zStep);
 
-                // this.drawImage({'canvas': this.canvas, 'image': image.canvas, 'desw': this.w, 'desh': this.h, 'desx': xCanvas, 'desy': yCanvas});
-            
-                this.context.drawImage(image.canvas, xCanvas, yCanvas);
+            var xCanvas = this.xc + (xRel * image.xOffset) - (yRel * image.xOffset) - image.xOffset,
+                yCanvas = this.yc + (xRel * image.yOffset) + (yRel * image.yOffset) - image.yOffset - (zRel * zStep);
 
-            } else {
-                console.log(imagePath + ' does not exist');
-            }    
+            this.context.drawImage(image.canvas, xCanvas, yCanvas);
         },
-    
-        renderPlayer: function(imagePath, playerOS, isGhost)
+
+        /**
+         * Render the main player
+         * @param imagePath
+         * @param playerOS
+         */
+        renderPlayer: function(imagePath, playerOS)
         {
             var playerSprite = this.spriteAlbum.get(imagePath),
                 step         = 0;
-
-
-            if (isGhost) {
-                playerSprite.context.globalAlpha = 0.5;
-            }
 
             switch (playerOS.state) {
                 case playerOS.entity.STATE_WALKING:

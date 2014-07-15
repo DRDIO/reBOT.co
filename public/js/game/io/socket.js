@@ -1,11 +1,11 @@
-define(['/socket.io/socket.io.js'], function() 
+define(['/socket.io/socket.io.js'], function()
 {
-    
+
     var Socket = $C.extend({
         socket:     null,
         approved:   null,
         promise:    null,
-        
+
         init: function()
         {
             $L.html('Creating Socket');

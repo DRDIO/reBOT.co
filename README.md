@@ -9,4 +9,4 @@ reBOT.co is a web-based social game where players wander a post Utopian society 
 Setup
 -----
 
-Clone the repo and click /public/index.html. Congratulations, you are playing the development version of reBOT.co! As we progress in development, the setup procedures will become more complex, involving node.js and socket.IO setup along with basic knowledge of running a Linux server. But for now, easy jQuery goodness!
+Clone the repo and run `node index.js`. Congratulations, you are playing the development version of reBOT.co! As we progress in development, the setup procedures will become more complex, involving node.js and socket.IO setup along with basic knowledge of running a Linux server. But for now, easy jQuery goodness!

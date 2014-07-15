@@ -1,0 +1,39 @@
+doctype html
+html
+head
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(href='http://fonts.googleapis.com/css?family=Lobster', rel='stylesheet', type='font/woff')
+    link(href='http://fonts.googleapis.com/css?family=Ubuntu:bolditalic', rel='stylesheet', type='font/woff')
+    link(href='/css/jquery/jquery-ui-1.8.11.custom.css', rel='stylesheet', media='screen')
+    link(href='/css/ui.css', rel='stylesheet', media='screen')
+
+body
+    section#page(style='display: none;')
+        header.title
+            h1
+                em re
+                | BOT
+                span .co
+            section#main
+                section#game
+                section#panel(style='display: none;')
+                    h2 Settings
+                    div
+                        label Update Hash
+                        button#setting-hash Hash Browns!
+                    div
+                        label Force Refresh
+                        button#setting-refresh BOOM!
+            footer#copyright
+                p
+                    | 2011
+                    a(href='http://dierobotdie.tumblr.com/') DieRobotDie
+        section#loading
+            header.title
+                h1
+                    em re
+                    | BOT
+                    span .co
+            section
+                | Loading Core Files
+    script(src='/js/lib/jrequire.js', data-main='/js/bootstrap.js')

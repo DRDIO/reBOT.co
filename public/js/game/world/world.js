@@ -60,7 +60,7 @@ define([
         },
 
         seed: function (xCenter, yCenter, radius) {
-            console.log([xCenter, yCenter, radius]);
+            // console.log([xCenter, yCenter, radius]);
 
             for (var x = xCenter - radius; x <= xCenter + radius; x++) {
                 if (!this.map[x]) {
