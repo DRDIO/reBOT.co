@@ -27,13 +27,22 @@ define([
             this.scene    = new THREE.Scene();
             this.camera   = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-            this.camera.position.set(16, 16, 48); // The camera starts at the origin, so move it to a good position.
+            this.camera.position.set(16, 16, 32); // The camera starts at the origin, so move it to a good position.
             this.camera.up = new THREE.Vector3( 0, 0, 1 );
             this.camera.lookAt(this.scene.position);
 
 
+            // add subtle ambient lighting
+            //var ambientLight = new THREE.AmbientLight(0x440044);
+            //this.scene.add(ambientLight);
 
-            this.renderer = new THREE.WebGLRenderer();
+            // directional lighting
+            var directionalLight = new THREE.DirectionalLight(0xcccccc);
+            directionalLight.position.set(0, 0, 8).normalize();
+            this.scene.add(directionalLight);
+
+
+            this.renderer = new THREE.WebGLRenderer({antialias:true});
             this.renderer.setSize( window.innerWidth, window.innerHeight );
 
             document.body.appendChild( this.renderer.domElement );

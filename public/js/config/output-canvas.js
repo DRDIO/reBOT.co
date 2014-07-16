@@ -18,7 +18,7 @@ define({
 
         // Noise Terrain Generation
         'nstep1': {l: 'Frequency 1', v: 128, i: 0, a: 512, s: 32, r: true},
-        'namp1':  {l: 'Amplitude 1', v: 4,  i: 0, a: 128, s: 1, r: true},
+        'namp1':  {l: 'Amplitude 1', v: 24,  i: 0, a: 128, s: 1, r: true},
         'nstep2': {l: 'Frequency 2', v: 16,  i: 0, a: 128, s: 8, r: true},
         'namp2':  {l: 'Amplitude 2', v: 16,   i: 0, a: 64,  s: 1, r: true},
 

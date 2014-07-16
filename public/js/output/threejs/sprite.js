@@ -27,7 +27,7 @@ define(function()
             this.geometry = new THREE.BoxGeometry(width, width, height);
             this.geometry.applyMatrix( new THREE.Matrix4().makeTranslation(width / 2, width / 2, height / 2) );
 
-            this.material = new THREE.MeshBasicMaterial( { color: options.color || 0xffffff } );
+            this.material = new THREE.MeshLambertMaterial( { color: options.color || 0xffffff } );
 
             this.promise.resolve();
         },
