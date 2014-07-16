@@ -13,14 +13,14 @@ define({
 
         // Core Sliders and Steps
         'fps':   {l: 'FPS',           v: 45, i: 5, a: 120, s: 5},
-        'zstep': {l: 'Step Height',   v: 12, i: 0, a: 32,  s: 1, r: true},
-        'rstep': {l: 'Render Radius', v: 18, i: 1, a: 32,  s: 1, r: true},
+        'zstep': {l: 'Step Height',   v: 4, i: 0, a: 32,  s: 1, r: true},
+        'rstep': {l: 'Render Radius', v: 32, i: 1, a: 32,  s: 1, r: true},
 
         // Noise Terrain Generation
-        'nstep1': {l: 'Frequency 1', v: 256, i: 0, a: 512, s: 32, r: true},
-        'namp1':  {l: 'Amplitude 1', v: 64,  i: 0, a: 128, s: 1, r: true},
+        'nstep1': {l: 'Frequency 1', v: 128, i: 0, a: 512, s: 32, r: true},
+        'namp1':  {l: 'Amplitude 1', v: 4,  i: 0, a: 128, s: 1, r: true},
         'nstep2': {l: 'Frequency 2', v: 16,  i: 0, a: 128, s: 8, r: true},
-        'namp2':  {l: 'Amplitude 2', v: 8,   i: 0, a: 64,  s: 1, r: true},
+        'namp2':  {l: 'Amplitude 2', v: 16,   i: 0, a: 64,  s: 1, r: true},
 
         // Terrain Type Levels
         'lvlwater': {l: 'Water Level', v: -80,  i: -100, a: 100, s: 1},

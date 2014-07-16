@@ -1,6 +1,6 @@
 define({
     settings: {
-        'seed': 'pasdfadsffa',
+        'seed': Math.random(),
 
         // On/Off Settings
         'jetpack': 1,

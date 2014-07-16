@@ -59,11 +59,12 @@ define([
 
             $.when.apply($, promises).done(function () {
                 // Start rendering game to screen
-                output.start();
+                output.start(game.settings, game.world);
 
-                setInterval(function () {
-                    output.render(game.settings, game.world);
-                }, 1000 / game.settings.fps);
+                game.socket.emit('ready');
+                game.socket.on('welcome', function(data) {
+                    console.log(data.message);
+                });
             });
         },
 

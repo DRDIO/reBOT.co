@@ -18,12 +18,12 @@ define(['/socket.io/socket.io.js'], function()
             this.socket = io.connect();
             
             var promise = this.promise;
-            
+
             this.socket.on('connect', function() {
                 promise.resolve();
                 $L.html('Connected to Server');
             });
-            
+
             this.socket.on('disconnect', function() {
                 console.log('disconnected');
             });

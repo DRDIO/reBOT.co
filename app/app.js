@@ -1,7 +1,7 @@
 var express = require('express.io'),
     app = express(),
-    routes  = require('./routes'),
-    jade    = require('jade'),
+    routes = require('./routes'),
+    jade = require('jade'),
     confOauth = require('../config/oauth.js'),
     mongoose = require('mongoose'),
     passport = require('passport'),
@@ -66,11 +66,22 @@ app.get('/logout', function (req, res) {
     res.redirect('/');
 });
 
+// Setup the ready route, and emit talk event.
+app.io.route('ready', function(req) {
+    req.io.emit('welcome', {
+        message: 'Welcome to the game, ' + req.session.passport.user.displayName
+    })
+});
+
 // port
 app.listen(process.env.PORT || 3000);
 
 // test authentication
 function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) { return next(); }
-    res.redirect('/')
+    if (req.isAuthenticated()) {
+        return next();
+    }
+
+    res.redirect('/');
+    return null;
 }

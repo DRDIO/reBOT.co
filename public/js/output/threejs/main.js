@@ -1,30 +1,35 @@
 define([
     './display',
-    './dom'
+    './dom',
+    '../../lib/threejs'
 ], function(Display, Dom) {
 
     /**
      * @class Output
      */
     return $C.extend({
-        display:        null,
         dom:            null,
         promises:       null,
         game:           null,
         config:         null,
+        scene:          null,
+        camera:         null,
+        renderer:       null,
+        cube:           null,
+
+        // Information passed from game and stored for renders
+        settings: null,
+        world: null,
 
         init: function(config)
         {
             this.config = config;
 
             // Setup Canvas Display with Sprites
-            this.display = new Display($(config.domCanvas), 'canvas', config.spritePaths);
+            this.display = new Display(config.spritePaths);
 
             // Setup DOM and attempt to load settings from URL
             this.dom = new Dom();
-
-            // Image loading might take a while, get all of the sprite promises
-            this.promises = this.display.getPromises();
 
             return this;
         },
@@ -33,20 +38,17 @@ define([
             this.game = game;
 
             // When everything is setup, allow mouse and keyboard movements
-            this.dom
-                .attachToolbar(game, this.config.mixer);
+            this.dom.attachToolbar(game, this.config.mixer);
         },
 
         start: function(settings, world)
         {
+            this.settings = settings;
+            this.world    = world;
+
             this.dom.start();
-            var output = this;
-
-            clearInterval(this.interval);
-
-            this.interval = setInterval(function () {
-                output.render(settings, world);
-            }, 1000 / settings.fps);
+            this.render();
+            this.render();
 
             return this;
         },
@@ -56,10 +58,12 @@ define([
             return this.promises;
         },
 
-        render: function(settings, world)
+        render: function()
         {
+            //requestAnimationFrame(this.render.bind(this));
+
             // Fascilitate communication between layers and provide necessary info
-            this.display.render(world, world.player, settings.rstep);
+            this.display.render(this.world, this.world.player, this.settings.rstep);
         }
     });
 });
