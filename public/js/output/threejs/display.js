@@ -23,11 +23,11 @@ define([
             this.spriteAlbum = new SpriteAlbum();
             this.paths       = paths;
 
-
             this.scene    = new THREE.Scene();
-            this.camera   = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-            this.camera.position.set(16, 16, 24); // The camera starts at the origin, so move it to a good position.
+            // Camera will be added to track player
+            this.camera   = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+            this.camera.position.set(0, 3, 3); // The camera starts at the origin, so move it to a good position.
             this.camera.up = new THREE.Vector3( 0, 0, 1 );
             this.camera.lookAt(this.scene.position);
 
@@ -37,9 +37,9 @@ define([
             this.scene.add(ambientLight);
 
             // directional lighting
-            var directionalLight = new THREE.DirectionalLight(0xbbdddd);
-            directionalLight.position.set(16, 16, 24).normalize();
-            this.scene.add(directionalLight);
+            this.light = new THREE.DirectionalLight(0xddffff);
+            this.light.position.set(16, 16, 24).normalize();
+            this.scene.add(this.light);
 
 
             this.renderer = new THREE.WebGLRenderer({antialias:true});
@@ -90,7 +90,7 @@ define([
 
             // Create Custom Player
             $L.html('Loading Player');
-            this.spriteAlbum.set(paths.player, 0.75, 0.75, 16, 40, { color: 0x0000ff });
+            this.spriteAlbum.set(paths.player, 0.5, 1, 16, 40, { color: 0x0000ff, isPlayer: true });
 
         },
 
@@ -145,7 +145,7 @@ define([
 
             // Render the player if we are around the center tile (note the rounding due to player sub steps)
             if (Math.round(x - playerOS.x) == 0 && Math.round(y - playerOS.y) == 0) {
-                this.renderPlayer(this.paths.player, playerOS);
+                this.renderPlayer(this.paths.player, playerOS, zTile / world.zstep);
             }
 
             // Overlay a tile of water if tile is flooded
@@ -191,7 +191,7 @@ define([
          * @param imagePath
          * @param playerOS
          */
-        renderPlayer: function(imagePath, playerOS)
+        renderPlayer: function(imagePath, playerOS, z)
         {
             var playerSprite = this.spriteAlbum.get(imagePath),
                 step         = 0;
@@ -221,10 +221,12 @@ define([
             if (typeof this.worldgen['player'] === 'undefined') {
                 var mesh = new THREE.Mesh(playerSprite.geometry, playerSprite.material);
                 this.worldgen['player'] = mesh;
+                mesh.add(this.camera);
                 this.scene.add(mesh);
             }
 
-            this.worldgen['player'].position.set(0, 0, 5);
+            this.worldgen['player'].rotation.z = (playerOS.entity.globalDir - 1) * Math.PI / 2;
+            this.worldgen['player'].position.set(playerOS.x, playerOS.y, z);
         }
     });
 

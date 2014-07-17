@@ -60,7 +60,7 @@ define([
 
         render: function()
         {
-            //requestAnimationFrame(this.render.bind(this));
+            requestAnimationFrame(this.render.bind(this));
 
             // Fascilitate communication between layers and provide necessary info
             this.display.render(this.world, this.world.player, this.settings.rstep);

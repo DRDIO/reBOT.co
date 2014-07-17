@@ -25,7 +25,12 @@ define(function()
             this.options = options;
 
             this.geometry = new THREE.BoxGeometry(width, width, height);
-            this.geometry.applyMatrix( new THREE.Matrix4().makeTranslation(width / 2, width / 2, height / 2) );
+
+            var hOffset = -height / 2;
+            if (options.isPlayer) {
+                hOffset = height / 2;
+            }
+            this.geometry.applyMatrix( new THREE.Matrix4().makeTranslation(0, 0, hOffset) );
 
             this.material = new THREE.MeshLambertMaterial( { color: options.color || 0xffffff } );
 
